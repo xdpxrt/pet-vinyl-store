@@ -18,6 +18,8 @@ public class Performer {
     private Long id;
     @Column(nullable = false, unique = true, length = 64)
     private String name;
+    @Column(nullable = false, length = 512)
+    private String bio;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;

@@ -9,7 +9,6 @@
 
     <artifactId>util-service</artifactId>
     <packaging>pom</packaging>
-    <url>http://maven.apache.org</url>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
