@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,24 +37,24 @@ public class GenreController {
     public List<GenreDTO> getGenres(@RequestParam(defaultValue = "0") Integer from,
                                     @RequestParam(defaultValue = "20") Integer size) {
         log.info("Response from GET request on {}", GENRE_URI);
-        return genreService.getGenres(fromSizePage(from, size, "name"));
+        return genreService.getGenres(fromSizePage(from, size, Sort.by("name")));
     }
 
     @PatchMapping(ID_URI)
     public GenreDTO updateGenre(@RequestBody @Valid GenreDTO genreDTO,
-                                @PathVariable @Positive Long id) {
+                                @PathVariable @Positive Integer id) {
         log.info("Response from PATCH request on {}/{}", GENRE_URI, id);
         return genreService.updateGenre(genreDTO, id);
     }
 
     @DeleteMapping(ID_URI)
-    public void deleteGenre(@PathVariable @Positive Long id) {
+    public void deleteGenre(@PathVariable @Positive Integer id) {
         log.info("Response from DELETE request on {}/{}", GENRE_URI, id);
         genreService.deleteGenre(id);
     }
 
     @GetMapping(ID_URI)
-    public FullGenreDTO getGenre(@PathVariable @Positive Long id) {
+    public FullGenreDTO getGenre(@PathVariable @Positive Integer id) {
         log.info("Response from GET request on {}/{}", GENRE_URI, id);
         return genreService.getGenre(id);
     }

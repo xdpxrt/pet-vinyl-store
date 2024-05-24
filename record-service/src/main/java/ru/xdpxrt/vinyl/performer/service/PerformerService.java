@@ -12,7 +12,7 @@ import java.util.List;
 public interface PerformerService {
     FullPerformerDTO addPerformer(NewPerformerDTO newPerformerDTO);
 
-    List<ShortPerformerDTO> getPerformers(String text, Integer from, Integer size, SortType sortType);
+    List<ShortPerformerDTO> getPerformers(String text, PageRequest pageRequest, SortType sortType);
 
     FullPerformerDTO updatePerformer(UpdatePerformerDTO updatePerformerDTO, Long id);
 

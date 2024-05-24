@@ -1,8 +1,9 @@
 package ru.xdpxrt.vinyl.performer.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.cons.SortType;
 import ru.xdpxrt.vinyl.country.model.Country;
@@ -20,11 +21,11 @@ import ru.xdpxrt.vinyl.record.mapper.RecordMapper;
 import ru.xdpxrt.vinyl.record.model.Record;
 import ru.xdpxrt.vinyl.record.repository.RecordRepository;
 
+import java.beans.Transient;
 import java.util.List;
 
 import static ru.xdpxrt.vinyl.cons.Message.COUNTRY_NOT_FOUND;
 import static ru.xdpxrt.vinyl.cons.Message.PERFORMER_NOT_FOUND;
-import static ru.xdpxrt.vinyl.util.Utilities.fromSizePage;
 
 @Slf4j
 @Service
@@ -38,6 +39,7 @@ public class PerformerServiceImpl implements PerformerService {
     private final RecordMapper recordMapper;
 
     @Override
+    @Transactional
     public FullPerformerDTO addPerformer(NewPerformerDTO newPerformerDTO) {
         log.debug("Adding performer {}", newPerformerDTO);
         Country country = getCountryIfExist(newPerformerDTO.getCountryId());
@@ -49,25 +51,22 @@ public class PerformerServiceImpl implements PerformerService {
     }
 
     @Override
-    public List<ShortPerformerDTO> getPerformers(String text, Integer from, Integer size, SortType sortType) {
+    @Transactional
+    public List<ShortPerformerDTO> getPerformers(String text, PageRequest pageRequest, SortType sortType) {
         log.debug("Getting list of performers");
-        //TODO sort by popular
-        String sort = switch (sortType) {
-            case PERFORMER -> "name";
-            case POPULAR -> "popular";
-            default -> throw new BadRequestException(String.format("Wring type of sorting %s", sortType));
-        };
-        List<Performer> performers;
-        if (text != null && !text.isBlank()) {
-            String searchText = "%" + text.toLowerCase() + "%";
-            Specification<Performer> s = (root, query, criteriaBuilder) -> criteriaBuilder.or(
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), searchText));
-            performers = performerRepository.findAll(s, fromSizePage(from, size, sort)).toList();
-        } else performers = performerRepository.findAll(fromSizePage(from, size, sort)).toList();
-        return performerMapper.toShortPerformerDTO(performers);
+        List<ShortPerformerDTO> performers;
+        switch (sortType) {
+            case PERFORMER -> performers = text.isBlank() ? performerRepository.findAllOrderBySellCountDesc(pageRequest)
+                    : performerRepository.findAllNameContainingOrderBySellCountDesc(text, pageRequest);
+            case POPULAR -> performers = text.isBlank() ? performerRepository.findAllOrderByName(pageRequest)
+                    : performerRepository.findAllNameContainingOrderByName(text, pageRequest);
+            default -> throw new BadRequestException(String.format("Wrong type of sorting %s", sortType));
+        }
+        return performers;
     }
 
     @Override
+    @Transactional
     public FullPerformerDTO updatePerformer(UpdatePerformerDTO updatePerformerDTO, Long id) {
         log.debug("Updating performer ID{}", id);
         Performer performer = getPerformerIfExist(id);
@@ -76,13 +75,14 @@ public class PerformerServiceImpl implements PerformerService {
         if (updatePerformerDTO.getBio() != null && !updatePerformerDTO.getBio().isBlank())
             performer.setBio(updatePerformerDTO.getBio());
         if (updatePerformerDTO.getCountryId() != null)
-            performer.setCountry(getCountryIfExist(id));
+            performer.setCountry(getCountryIfExist(updatePerformerDTO.getCountryId()));
         performer = performerRepository.save(performer);
         log.debug("Performer ID{} updated", id);
         return fillPerformerWithRecords(performerMapper.toFullPerformerDTO(performer));
     }
 
     @Override
+    @Transactional
     public void deletePerformer(Long id) {
         log.debug("Deleting performer ID{}", id);
         getPerformerIfExist(id);
@@ -90,13 +90,14 @@ public class PerformerServiceImpl implements PerformerService {
     }
 
     @Override
+    @Transactional
     public FullPerformerDTO getPerformer(Long id) {
         log.debug("Getting performer ID{}", id);
         Performer performer = getPerformerIfExist(id);
         return fillPerformerWithRecords(performerMapper.toFullPerformerDTO(performer));
     }
 
-    private Country getCountryIfExist(Long id) {
+    private Country getCountryIfExist(Integer id) {
         return countryRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format(COUNTRY_NOT_FOUND, id)));
     }

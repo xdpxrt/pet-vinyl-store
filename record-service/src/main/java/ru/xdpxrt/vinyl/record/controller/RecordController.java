@@ -29,24 +29,24 @@ public class RecordController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FullRecordDTO addRecord(NewRecordDTO newRecordDTO) {
+    public FullRecordDTO addRecord(@RequestBody @Valid NewRecordDTO newRecordDTO) {
         log.info("Response from POST request on {}", RECORD_URI);
         return recordService.addRecord(newRecordDTO);
     }
 
     @GetMapping
-    public List<ShortRecordDTO> getRecords(@RequestParam(defaultValue = "POPULAR") SortType sortType,
-                                           @RequestParam(required = false) String text,
+    public List<ShortRecordDTO> getRecords(@RequestParam(required = false) SortType sortType,
+                                           @RequestParam(defaultValue = "") String text,
                                            @RequestParam(required = false) Long genreId,
                                            @RequestParam(required = false) Integer fromYear,
                                            @RequestParam(required = false) Integer toYear,
                                            @RequestParam(required = false) Double fromPrice,
                                            @RequestParam(required = false) Double toPrice,
-                                           @RequestParam(defaultValue = "false") Boolean available,
+                                           @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                            @RequestParam(defaultValue = "0") Integer from,
                                            @RequestParam(defaultValue = "20") Integer size) {
         log.info("Response from GET request on {}", RECORD_URI);
-        return recordService.getRecords(sortType, text, genreId, fromYear, toYear, fromPrice, toPrice, available,
+        return recordService.getRecords(sortType, text, genreId, fromYear, toYear, fromPrice, toPrice, onlyAvailable,
                 from, size);
     }
 

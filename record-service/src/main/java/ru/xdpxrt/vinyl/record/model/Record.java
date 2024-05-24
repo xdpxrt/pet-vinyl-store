@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.xdpxrt.vinyl.performer.model.Performer;
 import ru.xdpxrt.vinyl.genre.model.Genre;
+import ru.xdpxrt.vinyl.unit.model.Unit;
 
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "records")
@@ -35,9 +35,7 @@ public class Record {
             joinColumns = @JoinColumn(name = "record_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
-
-    @Transient
-    private Double price;
-    @Transient
-    private Integer quantity;
+    @PrimaryKeyJoinColumn
+    @OneToOne(cascade = CascadeType.ALL)
+    private Unit unit;
 }

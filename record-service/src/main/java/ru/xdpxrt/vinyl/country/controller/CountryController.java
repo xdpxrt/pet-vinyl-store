@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,24 +37,24 @@ public class CountryController {
     public List<CountryDTO> getCountries(@RequestParam(defaultValue = "0") Integer from,
                                          @RequestParam(defaultValue = "20") Integer size) {
         log.info("Response from GET request on {}", COUNTRY_URI);
-        return countryService.getCountries(fromSizePage(from, size, "name"));
+        return countryService.getCountries(fromSizePage(from, size, Sort.by("name")));
     }
 
     @PatchMapping(ID_URI)
     public CountryDTO updateCountry(@RequestBody @Valid CountryDTO countryDTO,
-                                    @PathVariable @Positive Long id) {
+                                    @PathVariable @Positive Integer id) {
         log.info("Response from PATCH request on {}/{}", COUNTRY_URI, id);
         return countryService.updateCountry(countryDTO, id);
     }
 
     @DeleteMapping(ID_URI)
-    public void deleteCountry(@PathVariable @Positive Long id) {
+    public void deleteCountry(@PathVariable @Positive Integer id) {
         log.info("Response from DELETE request on {}/{}", COUNTRY_URI, id);
         countryService.deleteCountry(id);
     }
 
     @GetMapping(ID_URI)
-    public FullCountryDTO getCountry(@PathVariable @Positive Long id) {
+    public FullCountryDTO getCountry(@PathVariable @Positive Integer id) {
         log.info("Response from GET request on {}/{}", COUNTRY_URI, id);
         return countryService.getCountry(id);
     }

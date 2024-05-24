@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: country
+          uri: lb://record-service
+          predicates:
+            - Path=/country/**
+        - id: genre
+          uri: lb://record-service
+          predicates:
+            - Path=/genre/**
+        - id: performer
+          uri: lb://record-service
+          predicates:
+            - Path=/performer/**
+        - id: record
+          uri: lb://record-service
+          predicates:
+            - Path=/record/**
+        - id: unit
+          uri: lb://record-service
+          predicates:
+            - Path=/unit/**
+server:
+  port: 8080
+eureka:
+  client:
+    register-with-eureka: false

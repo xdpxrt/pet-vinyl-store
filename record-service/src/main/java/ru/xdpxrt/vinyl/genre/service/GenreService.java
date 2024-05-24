@@ -11,9 +11,9 @@ public interface GenreService {
 
     List<GenreDTO> getGenres(PageRequest pageRequest);
 
-    GenreDTO updateGenre(GenreDTO genreDTO, Long id);
+    GenreDTO updateGenre(GenreDTO genreDTO, Integer id);
 
-    void deleteGenre(Long id);
+    void deleteGenre(Integer id);
 
-    FullGenreDTO getGenre(Long id);
+    FullGenreDTO getGenre(Integer id);
 }

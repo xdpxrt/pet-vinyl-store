@@ -11,9 +11,9 @@ public interface CountryService {
 
     List<CountryDTO> getCountries(PageRequest pageRequest);
 
-    CountryDTO updateCountry(CountryDTO countryDTO, Long id);
+    CountryDTO updateCountry(CountryDTO countryDTO, Integer id);
 
-    void deleteCountry(Long id);
+    void deleteCountry(Integer id);
 
-    FullCountryDTO getCountry(Long id);
+    FullCountryDTO getCountry(Integer id);
 }

@@ -36,12 +36,12 @@ public class PerformerController {
     }
 
     @GetMapping
-    public List<ShortPerformerDTO> getPerformers(@RequestParam String text,
+    public List<ShortPerformerDTO> getPerformers(@RequestParam(defaultValue = "") String text,
                                                  @RequestParam(defaultValue = "0") Integer from,
                                                  @RequestParam(defaultValue = "20") Integer size,
-                                                 @RequestParam(defaultValue = "PERFORMER") SortType sortType) {
+                                                 @RequestParam(required = false) SortType sortType) {
         log.info("Response from GET request on {}", PERFORMER_URI);
-        return performerService.getPerformers(text, from, size, sortType);
+        return performerService.getPerformers(text, fromSizePage(from, size), sortType);
     }
 
     @PatchMapping(ID_URI)

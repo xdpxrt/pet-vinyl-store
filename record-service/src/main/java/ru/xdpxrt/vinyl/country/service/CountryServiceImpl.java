@@ -1,5 +1,6 @@
 package ru.xdpxrt.vinyl.country.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Limit;
@@ -10,12 +11,14 @@ import ru.xdpxrt.vinyl.country.model.Country;
 import ru.xdpxrt.vinyl.country.repository.CountryRepository;
 import ru.xdpxrt.vinyl.dto.countryDTO.CountryDTO;
 import ru.xdpxrt.vinyl.dto.countryDTO.FullCountryDTO;
+import ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO;
 import ru.xdpxrt.vinyl.error.ConflictException;
 import ru.xdpxrt.vinyl.error.NotFoundException;
 import ru.xdpxrt.vinyl.performer.mapper.PerformerMapper;
 import ru.xdpxrt.vinyl.performer.model.Performer;
 import ru.xdpxrt.vinyl.performer.repository.PerformerRepository;
 
+import java.beans.Transient;
 import java.util.List;
 
 import static ru.xdpxrt.vinyl.cons.Message.COUNTRY_NOT_FOUND;
@@ -28,9 +31,9 @@ public class CountryServiceImpl implements CountryService {
     private final PerformerRepository performerRepository;
 
     private final CountryMapper countryMapper;
-    private final PerformerMapper performerMapper;
 
     @Override
+    @Transactional
     public CountryDTO addCountry(CountryDTO countryDTO) {
         log.debug("Adding component {}", countryDTO);
         Country country = countryRepository.save(countryMapper.toCountry(countryDTO));
@@ -39,13 +42,15 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Transactional
     public List<CountryDTO> getCountries(PageRequest pageRequest) {
         log.debug("Getting list of countries");
         return countryMapper.toCountryDTO(countryRepository.findAll(pageRequest).toList());
     }
 
     @Override
-    public CountryDTO updateCountry(CountryDTO countryDTO, Long id) {
+    @Transactional
+    public CountryDTO updateCountry(CountryDTO countryDTO, Integer id) {
         log.debug("Updating country ID{}", id);
         Country country = getCountryIfExist(id);
         if (country.getName().equals(countryDTO.getName()))
@@ -57,7 +62,8 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void deleteCountry(Long id) {
+    @Transactional
+    public void deleteCountry(Integer id) {
         log.debug("Deleting country ID{}", id);
         getCountryIfExist(id);
         countryRepository.deleteById(id);
@@ -65,16 +71,17 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public FullCountryDTO getCountry(Long id) {
+    @Transactional
+    public FullCountryDTO getCountry(Integer id) {
         log.debug("Getting country ID{}", id);
         FullCountryDTO fullCountryDTO = countryMapper.toFullCountryDTO(getCountryIfExist(id));
-        //TODO fill FullCountryDTO with 10 most popular performers of this country
-        List<Performer> performers = performerRepository.findAllByCountryIdOrderByName(id, Limit.of(10));
-        fullCountryDTO.setPerformers(performerMapper.toShortPerformerDTO(performers));
+        List<ShortPerformerDTO> performers =
+                performerRepository.findAllOrderBySellCountDesc(PageRequest.of(0, 10));
+        fullCountryDTO.setPerformers(performers);
         return fullCountryDTO;
     }
 
-    private Country getCountryIfExist(Long id) {
+    private Country getCountryIfExist(Integer id) {
         return countryRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format(COUNTRY_NOT_FOUND, id)));
     }

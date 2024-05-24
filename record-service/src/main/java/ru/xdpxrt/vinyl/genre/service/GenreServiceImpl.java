@@ -1,5 +1,6 @@
 package ru.xdpxrt.vinyl.genre.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Limit;
@@ -33,6 +34,7 @@ public class GenreServiceImpl implements GenreService {
 
 
     @Override
+    @Transactional
     public GenreDTO addGenre(GenreDTO genreDTO) {
         log.debug("Adding genre {}", genreDTO);
         Genre genre = genreRepository.save(genreMapper.toGenre(genreDTO));
@@ -41,13 +43,15 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    @Transactional
     public List<GenreDTO> getGenres(PageRequest pageRequest) {
         log.debug("Getting list of genres");
         return genreMapper.toGenreDTO(genreRepository.findAll(pageRequest).toList());
     }
 
     @Override
-    public GenreDTO updateGenre(GenreDTO genreDTO, Long id) {
+    @Transactional
+    public GenreDTO updateGenre(GenreDTO genreDTO, Integer id) {
         log.debug("Updating genre ID{}", id);
         Genre genre = getGenreIfExist(id);
         if (genre.getName().equals(genreDTO.getName()))
@@ -59,7 +63,8 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public void deleteGenre(Long id) {
+    @Transactional
+    public void deleteGenre(Integer id) {
         log.debug("Deleting genre ID{}", id);
         getGenreIfExist(id);
         genreRepository.deleteById(id);
@@ -67,16 +72,16 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public FullGenreDTO getGenre(Long id) {
+    @Transactional
+    public FullGenreDTO getGenre(Integer id) {
         log.debug("Getting genre ID{}", id);
         FullGenreDTO genre = genreMapper.toFullGenreDTO(getGenreIfExist(id));
-        //TODO fill FullGenreDTO with 10 most popular records of this genre
-        List<Record> records = recordRepository.findAllByGenreIdOrderByName(id, Limit.of(10));
+        List<Record> records = recordRepository.findAllByGenresIdOrderByUnitSellCountDesc(id, Limit.of(10));
         genre.setRecords(new HashSet<>(recordMapper.toShortRecordDTO(records)));
         return genre;
     }
 
-    private Genre getGenreIfExist(Long id) {
+    private Genre getGenreIfExist(Integer id) {
         return genreRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format(GENRE_NOT_FOUND, id)));
     }
