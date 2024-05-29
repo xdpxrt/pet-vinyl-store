@@ -59,9 +59,8 @@ public class RecordServiceImpl implements RecordService {
                 .sellCount(0)
                 .build();
         unit = unitRepository.save(unit);
+        record.setUnit(unit);
         FullRecordDTO recordDTO = recordMapper.toFullRecordDTO(record);
-        recordDTO.setPrice(unit.getPrice());
-        recordDTO.setAvailable(unit.getQuantity() > 0);
         log.debug("New record added {}", record);
         return recordDTO;
     }
@@ -139,6 +138,14 @@ public class RecordServiceImpl implements RecordService {
         log.debug("Getting record ID{}", id);
         Record record = getRecordIfExist(id);
         return recordMapper.toFullRecordDTO(record);
+    }
+
+    @Override
+    @Transactional
+    public List<ShortRecordDTO> getRecordsByIds(List<Long> ids) {
+        log.debug("Getting list of records IDs{}", ids);
+        List<Record> records = recordRepository.findAllById(ids);
+        return recordMapper.toShortRecordDTO(records);
     }
 
     private Record getRecordIfExist(Long id) {

@@ -11,16 +11,19 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RecordMapper {
+
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "performer", ignore = true)
     @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "unit", ignore = true)
     Record toRecord(NewRecordDTO newRecordDTO);
 
     @Mapping(target = "price", expression = "java(record.getUnit().getPrice())")
-    @Mapping(target = "available", expression = "java((record.getUnit().getQuantity() > 0) ? true : false)")
+    @Mapping(target = "quantity", expression = "java(record.getUnit().getQuantity())")
     FullRecordDTO toFullRecordDTO(Record record);
 
     @Mapping(target = "price", expression = "java(record.getUnit().getPrice())")
-    @Mapping(target = "available", expression = "java((record.getUnit().getQuantity() > 0) ? true : false)")
+    @Mapping(target = "quantity", expression = "java(record.getUnit().getQuantity())")
     ShortRecordDTO toShortRecordDTO(Record record);
 
     List<ShortRecordDTO> toShortRecordDTO(List<Record> record);

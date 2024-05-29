@@ -19,4 +19,6 @@ public interface RecordService {
     void deleteRecord(Long id);
 
     FullRecordDTO getRecord(Long id);
+
+    List<ShortRecordDTO> getRecordsByIds(List<Long> ids);
 }

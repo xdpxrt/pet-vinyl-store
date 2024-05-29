@@ -1,3 +1,5 @@
+server:
+  port: 8080
 spring:
   application:
     name: api-gateway
@@ -28,8 +30,15 @@ spring:
           uri: lb://record-service
           predicates:
             - Path=/unit/**
-server:
-  port: 8080
-eureka:
-  client:
-    register-with-eureka: false
+        - id: auth
+          uri: lb://user-service
+          predicates:
+            - Path=/auth/**
+        - id: user
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+        - id: order
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**

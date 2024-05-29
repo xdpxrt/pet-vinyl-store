@@ -16,8 +16,7 @@ import ru.xdpxrt.vinyl.record.service.RecordService;
 
 import java.util.List;
 
-import static ru.xdpxrt.vinyl.cons.URI.ID_URI;
-import static ru.xdpxrt.vinyl.cons.URI.RECORD_URI;
+import static ru.xdpxrt.vinyl.cons.URI.*;
 
 @Slf4j
 @Validated
@@ -67,5 +66,11 @@ public class RecordController {
     FullRecordDTO getRecord(@PathVariable @Positive Long id) {
         log.info("Response from GET request on {}/{}", RECORD_URI, id);
         return recordService.getRecord(id);
+    }
+
+    @GetMapping(IDS_URI)
+    public List<ShortRecordDTO> getRecordsByIds(@RequestParam List<@Positive Long> ids) {
+        log.info("Response from GET request on {}", RECORD_URI + IDS_URI);
+        return recordService.getRecordsByIds(ids);
     }
 }

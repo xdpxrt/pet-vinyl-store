@@ -16,10 +16,12 @@
 
   <modules>
     <module>api-gateway</module>
-    <module>record-service</module>
+    <module>auth-service</module>
     <module>config-server</module>
     <module>discover-service</module>
-      <module>user-service</module>
+    <module>order-service</module>
+    <module>record-service</module>
+    <module>user-service</module>
   </modules>
 
   <properties>

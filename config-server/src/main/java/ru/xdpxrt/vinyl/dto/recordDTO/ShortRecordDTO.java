@@ -16,5 +16,5 @@ public class ShortRecordDTO {
     private Integer publicationYear;
     private ShortPerformerDTO performer;
     private Double price;
-    private Boolean available;
+    private Integer quantity;
 }

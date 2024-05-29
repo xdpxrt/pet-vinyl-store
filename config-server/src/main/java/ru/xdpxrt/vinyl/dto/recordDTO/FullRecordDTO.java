@@ -22,5 +22,5 @@ public class FullRecordDTO {
     private ShortPerformerDTO performer;
     private Set<GenreDTO> genres;
     private Double price;
-    private Boolean available;
+    private Integer quantity;
 }

@@ -25,8 +25,6 @@ public class UnitController {
                               @PathVariable @Positive Long id) {
         log.info("Response from PATCH request on {}/{}", UNIT_URI, id);
         return unitService.updateUnit(updateUnitDTO, id);
-
-
     }
 
     @GetMapping
