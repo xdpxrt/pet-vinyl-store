@@ -35,6 +35,8 @@ public class Record {
             joinColumns = @JoinColumn(name = "record_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
+    @Column(nullable = false)
+    private String image;
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     private Unit unit;

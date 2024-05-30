@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS records (
     description VARCHAR(512),
     track_list VARCHAR(1024),
     performer_id BIGINT REFERENCES performers(id) NOT NULL,
-    genre_id BIGINT NOT NULL
+    genre_id BIGINT NOT NULL,
+    image VARCHAR(64) NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS records_genres (

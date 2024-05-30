@@ -1,0 +1,17 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: mail-service
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: xdpxrt@gmail.com
+    password: ipijeytdwphncqlt
+    subject: Vinyl Store
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable:true

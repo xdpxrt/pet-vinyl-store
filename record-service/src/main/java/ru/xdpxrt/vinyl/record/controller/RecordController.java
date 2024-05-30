@@ -1,12 +1,15 @@
 package ru.xdpxrt.vinyl.record.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.xdpxrt.vinyl.cons.SortType;
 import ru.xdpxrt.vinyl.dto.recordDTO.FullRecordDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.NewRecordDTO;
@@ -26,11 +29,12 @@ import static ru.xdpxrt.vinyl.cons.URI.*;
 public class RecordController {
     private final RecordService recordService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public FullRecordDTO addRecord(@RequestBody @Valid NewRecordDTO newRecordDTO) {
+    public FullRecordDTO addRecord(@RequestPart @Valid NewRecordDTO newRecordDTO,
+                                   @RequestPart @NotNull MultipartFile cover) {
         log.info("Response from POST request on {}", RECORD_URI);
-        return recordService.addRecord(newRecordDTO);
+        return recordService.addRecord(newRecordDTO, cover);
     }
 
     @GetMapping
@@ -50,10 +54,11 @@ public class RecordController {
     }
 
     @PatchMapping(ID_URI)
-    public FullRecordDTO updateRecord(@RequestBody @Valid UpdateRecordDTO updateRecordDTO,
+    public FullRecordDTO updateRecord(@RequestPart @Valid UpdateRecordDTO updateRecordDTO,
+                                      @RequestPart(required = false) MultipartFile cover,
                                       @PathVariable @Positive Long id) {
         log.info("Response from PATCH request on {}/{}", RECORD_URI, id);
-        return recordService.updateRecord(updateRecordDTO, id);
+        return recordService.updateRecord(updateRecordDTO, cover, id);
     }
 
     @DeleteMapping(ID_URI)

@@ -1,0 +1,11 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: storage-service
+aws:
+  region: eu-north-1
+  bucket: xdpxrt.vinyl.bucket
+  credentials:
+    access-key: AKIATCKARWLKMVK5RIOS
+    secret_key: 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

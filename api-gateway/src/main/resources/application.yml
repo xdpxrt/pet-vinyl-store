@@ -42,3 +42,7 @@ spring:
           uri: lb://order-service
           predicates:
             - Path=/order/**
+        - id: storage
+          uri: lb://s3storage-service
+          predicates:
+            - Path=/storage/**

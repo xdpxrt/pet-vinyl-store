@@ -3,10 +3,12 @@ package ru.xdpxrt.vinyl.record.service;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.xdpxrt.vinyl.cons.SortType;
 import ru.xdpxrt.vinyl.dto.recordDTO.FullRecordDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.NewRecordDTO;
@@ -20,6 +22,7 @@ import ru.xdpxrt.vinyl.performer.repository.PerformerRepository;
 import ru.xdpxrt.vinyl.record.mapper.RecordMapper;
 import ru.xdpxrt.vinyl.record.model.Record;
 import ru.xdpxrt.vinyl.record.repository.RecordRepository;
+import ru.xdpxrt.vinyl.service.StorageFeignService;
 import ru.xdpxrt.vinyl.unit.model.Unit;
 import ru.xdpxrt.vinyl.unit.repository.UnitRepository;
 
@@ -39,17 +42,20 @@ public class RecordServiceImpl implements RecordService {
     private final GenreRepository genreRepository;
     private final UnitRepository unitRepository;
 
+    private final StorageFeignService storage;
+
     private final RecordMapper recordMapper;
 
     @Override
     @Transactional
-    public FullRecordDTO addRecord(NewRecordDTO newRecordDTO) {
+    public FullRecordDTO addRecord(NewRecordDTO newRecordDTO, MultipartFile cover) {
         log.debug("Adding new record {}", newRecordDTO);
         Performer performer = getPerformerIfExist(newRecordDTO.getPerformer());
         Set<Genre> genres = new HashSet<>(getGenresIfExists(newRecordDTO.getGenres()));
         Record record = recordMapper.toRecord(newRecordDTO);
         record.setPerformer(performer);
         record.setGenres(genres);
+        record.setImage(storage.upload(cover));
         record = recordRepository.save(record);
         Unit unit = Unit.builder()
                 .record(record)
@@ -60,9 +66,8 @@ public class RecordServiceImpl implements RecordService {
                 .build();
         unit = unitRepository.save(unit);
         record.setUnit(unit);
-        FullRecordDTO recordDTO = recordMapper.toFullRecordDTO(record);
         log.debug("New record added {}", record);
-        return recordDTO;
+        return toFullRecordDTO(record);
     }
 
     @Override
@@ -99,7 +104,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public FullRecordDTO updateRecord(UpdateRecordDTO updateRecordDTO, Long id) {
+    public FullRecordDTO updateRecord(UpdateRecordDTO updateRecordDTO, MultipartFile cover, Long id) {
         log.debug("Updating record ID{}", id);
         Record record = getRecordIfExist(id);
         if (updateRecordDTO.getTitle() != null && !updateRecordDTO.getTitle().isBlank())
@@ -118,9 +123,13 @@ public class RecordServiceImpl implements RecordService {
             Set<Genre> genres = getGenresIfExists(updateRecordDTO.getGenres());
             record.setGenres(genres);
         }
+        if (cover != null && !cover.isEmpty()) {
+            storage.delete(record.getImage());
+            record.setImage(storage.upload(cover));
+        }
         record = recordRepository.save(record);
         log.debug("Record ID{} updated {}", id, record);
-        return recordMapper.toFullRecordDTO(record);
+        return toFullRecordDTO(record);
     }
 
     @Override
@@ -133,11 +142,12 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
+    @SneakyThrows
     @Transactional
     public FullRecordDTO getRecord(Long id) {
         log.debug("Getting record ID{}", id);
         Record record = getRecordIfExist(id);
-        return recordMapper.toFullRecordDTO(record);
+        return toFullRecordDTO(record);
     }
 
     @Override
@@ -146,6 +156,13 @@ public class RecordServiceImpl implements RecordService {
         log.debug("Getting list of records IDs{}", ids);
         List<Record> records = recordRepository.findAllById(ids);
         return recordMapper.toShortRecordDTO(records);
+    }
+
+    private FullRecordDTO toFullRecordDTO(Record record) {
+        FullRecordDTO recordDTO = recordMapper.toFullRecordDTO(record);
+        byte[] image = storage.download(record.getImage());
+        recordDTO.setImage(Base64.getEncoder().encodeToString(image));
+        return recordDTO;
     }
 
     private Record getRecordIfExist(Long id) {

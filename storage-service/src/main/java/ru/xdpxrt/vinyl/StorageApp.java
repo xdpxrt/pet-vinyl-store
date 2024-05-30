@@ -3,11 +3,12 @@ package ru.xdpxrt.vinyl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-
-@SpringBootApplication(exclude=DataSourceAutoConfiguration.class)
-public class GatewayApp {
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@EnableDiscoveryClient
+public class StorageApp {
     public static void main(String[] args) {
-        SpringApplication.run(GatewayApp.class);
+        SpringApplication.run(StorageApp.class, args);
     }
 }
