@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>ru.xdpxrt.vinyl</groupId>
-            <artifactId>config-server</artifactId>
+            <artifactId>util-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

@@ -14,6 +14,6 @@ public class KafkaProducer {
 
     public void send(String message) {
         log.debug("Sending message: {}", message);
-        kafkaTemplate.send("vinyl", message);
+        kafkaTemplate.send("mail", message);
     }
 }

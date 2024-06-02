@@ -9,9 +9,9 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
-    public NewTopic vinylTopic() {
+    public NewTopic mailTopic() {
         return TopicBuilder
-                .name("vinyl")
+                .name("mail")
                 .build();
     }
 }
