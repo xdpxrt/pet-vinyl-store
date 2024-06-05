@@ -16,6 +16,7 @@ public interface RecordMapper {
     @Mapping(target = "performer", ignore = true)
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "unit", ignore = true)
+    @Mapping(target = "image", ignore = true)
     Record toRecord(NewRecordDTO newRecordDTO);
 
     @Mapping(target = "price", expression = "java(record.getUnit().getPrice())")

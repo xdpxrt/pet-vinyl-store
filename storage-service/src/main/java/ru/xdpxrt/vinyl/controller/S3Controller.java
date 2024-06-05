@@ -24,7 +24,7 @@ public class S3Controller {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public String upload(@RequestParam MultipartFile file) {
+    public String upload(@RequestPart MultipartFile file) {
         log.info("Uploading file {}", file.getOriginalFilename());
         return s3Service.upload(file);
     }

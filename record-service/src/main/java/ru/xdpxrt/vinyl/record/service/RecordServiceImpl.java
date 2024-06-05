@@ -58,7 +58,8 @@ public class RecordServiceImpl implements RecordService {
         Record record = recordMapper.toRecord(newRecordDTO);
         record.setPerformer(performer);
         record.setGenres(genres);
-        record.setImage(storage.upload(cover));
+        MultipartFile file = cover;
+        record.setImage(storage.upload(file));
         record = recordRepository.save(record);
         Unit unit = Unit.builder()
                 .record(record)

@@ -114,6 +114,8 @@ services:
 
   mail-service:
     image: mail-service
+    build: mail-service
+    container_name: mail-service
     ports:
       - "8085:8085"
     environment:

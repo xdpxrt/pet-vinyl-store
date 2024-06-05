@@ -17,7 +17,7 @@ public interface StorageFeignService {
 
     @PostMapping(path = STORAGE_URI, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public String upload(@RequestParam MultipartFile file);
+    public String upload(@RequestPart MultipartFile file);
 
     @GetMapping(STORAGE_URI + KEY_URI)
     public byte[] download(@PathVariable @NotBlank String key);
