@@ -3,7 +3,12 @@ package ru.xdpxrt.vinyl.user.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
@@ -13,18 +18,32 @@ import ru.xdpxrt.vinyl.user.mapper.UserMapper;
 import ru.xdpxrt.vinyl.user.model.User;
 import ru.xdpxrt.vinyl.user.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import static ru.xdpxrt.vinyl.cons.Config.BIRTHDAY_TOPIC;
 import static ru.xdpxrt.vinyl.cons.Message.USER_NOT_FOUND;
 
 @Slf4j
 @Service
+@EnableScheduling
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     private final OrderFeignService orderFeignService;
+    private final KafkaTemplate<String, MessageDTO> kafkaTemplate;
+
+    @Scheduled(cron = "0 0 7 * * *")
+    public void sendCongrats() {
+        LocalDate date = LocalDate.now();
+        Specification<User> spec = (root, query, cb) -> cb.and(
+                cb.equal(cb.function("day", Integer.class, root.get("birthday")), date.getDayOfMonth()),
+                cb.equal(cb.function("month", Integer.class, root.get("birthday")), date.getMonth()));
+        List<User> users = userRepository.findAll(spec);
+        users.forEach(u -> kafkaTemplate.send(BIRTHDAY_TOPIC, getCongratsMessageDTO(u)));
+    }
 
     @Override
     @Transactional
@@ -52,7 +71,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUser(Long userId) {
         log.debug("Getting user ID{}", userId);
         List<ShortOrderDTO> orders = orderFeignService.getOrdersByCustomer(userId);
-        UserDTO user =  userMapper.toUserDTO(getUserIfExists(userId));
+        UserDTO user = userMapper.toUserDTO(getUserIfExists(userId));
         user.setOrders(orders);
         return user;
     }
@@ -75,5 +94,17 @@ public class UserServiceImpl implements UserService {
     private User getUserIfExists(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format(USER_NOT_FOUND, userId)));
+    }
+
+    private MessageDTO getCongratsMessageDTO(User user) {
+        String message = """
+                    Dear, %s.
+                If you’re reading this this… Congratulations, you’re alive.
+                If that’s not something to smile about, then I don’t know what is...
+                Best wishes from your favourite Vinyl Store""";
+        return MessageDTO.builder()
+                .email(user.getEmail())
+                .message(String.format(message, user.getName()))
+                .build();
     }
 }

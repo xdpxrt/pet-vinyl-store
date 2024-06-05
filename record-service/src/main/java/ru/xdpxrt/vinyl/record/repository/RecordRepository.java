@@ -8,7 +8,6 @@ import ru.xdpxrt.vinyl.record.model.Record;
 import java.util.List;
 
 public interface RecordRepository extends JpaRepository<Record, Long>, JpaSpecificationExecutor<Record> {
-    List<Record> findAllByGenresIdOrderByTitle(Integer id, Limit limit);
 
     List<Record> findAllByPerformerIdOrderByPublicationYear(Long id);
 

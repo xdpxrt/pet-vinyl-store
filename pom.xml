@@ -22,9 +22,8 @@
     <module>order-service</module>
     <module>record-service</module>
     <module>user-service</module>
-      <module>storage-service</module>
-      <module>mail-service</module>
-      <module>kafka-server</module>
+    <module>storage-service</module>
+    <module>mail-service</module>
   </modules>
 
   <properties>

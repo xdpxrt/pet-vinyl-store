@@ -1,13 +1,15 @@
 package ru.xdpxrt.vinyl.record.service;
 
 import jakarta.persistence.criteria.Root;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.xdpxrt.vinyl.cons.SortType;
 import ru.xdpxrt.vinyl.dto.recordDTO.FullRecordDTO;
@@ -35,6 +37,7 @@ import static ru.xdpxrt.vinyl.util.Utilities.fromSizePage;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "record")
 @RequiredArgsConstructor
 public class RecordServiceImpl implements RecordService {
     private final RecordRepository recordRepository;
@@ -71,7 +74,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ShortRecordDTO> getRecords(SortType sortType, String text, Long genreId, Integer fromYear,
                                            Integer toYear, Double fromPrice, Double toPrice, Boolean onlyAvailable,
                                            Integer from, Integer size) {
@@ -104,6 +107,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
+    @CachePut(key = "#id")
     public FullRecordDTO updateRecord(UpdateRecordDTO updateRecordDTO, MultipartFile cover, Long id) {
         log.debug("Updating record ID{}", id);
         Record record = getRecordIfExist(id);
@@ -134,6 +138,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
+    @Cacheable(key = "#id")
     public void deleteRecord(Long id) {
         log.debug("Deleting record ID{}", id);
         getRecordIfExist(id);
@@ -142,8 +147,8 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    @SneakyThrows
-    @Transactional
+    @Cacheable(key = "#id")
+    @Transactional(readOnly = true)
     public FullRecordDTO getRecord(Long id) {
         log.debug("Getting record ID{}", id);
         Record record = getRecordIfExist(id);
@@ -151,7 +156,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ShortRecordDTO> getRecordsByIds(List<Long> ids) {
         log.debug("Getting list of records IDs{}", ids);
         List<Record> records = recordRepository.findAllById(ids);

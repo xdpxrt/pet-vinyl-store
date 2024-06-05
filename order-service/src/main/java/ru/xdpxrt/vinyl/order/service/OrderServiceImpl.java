@@ -2,6 +2,7 @@ package ru.xdpxrt.vinyl.order.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.cons.OrderStatus;
 import ru.xdpxrt.vinyl.dto.itemDTO.ItemDTO;
@@ -15,6 +16,7 @@ import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.error.ConflictException;
 import ru.xdpxrt.vinyl.error.NotFoundException;
+import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
 import ru.xdpxrt.vinyl.order.item.model.Item;
 import ru.xdpxrt.vinyl.order.item.repository.ItemRepository;
 import ru.xdpxrt.vinyl.order.mapper.OrderMapper;
@@ -30,6 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+import static ru.xdpxrt.vinyl.cons.Config.ORDERS_TOPIC;
 import static ru.xdpxrt.vinyl.cons.Message.ORDER_NOT_FOUND;
 
 @Slf4j
@@ -43,6 +46,8 @@ public class OrderServiceImpl implements OrderService {
     private final RecordFeignService recordFeignService;
 
     private final OrderMapper orderMapper;
+
+    private final KafkaTemplate<String, MessageDTO> kafkaTemplate;
 
     @Override
     public FullOrderDTO addOrder(NewOrderDTO newOrderDTO, Long userId) {
@@ -74,24 +79,34 @@ public class OrderServiceImpl implements OrderService {
                 .peek(itemRepository::save)
                 .collect(Collectors.toMap(Item::getRecordId, Function.identity()));
         recordIdToItem.values()
-                .stream()
-                .peek(i -> recordFeignService.updateUnit(
+                .forEach(i -> recordFeignService.updateUnit(
                         UpdateUnitDTO
                                 .builder()
                                 .sell(i.getQuantity())
                                 .build(), i.getRecordId()));
         FullOrderDTO fullOrderDTO = toFullOrderDTO(order, records, recordIdToPcs, user);
+        kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
+                .builder()
+                .email(user.getEmail())
+                .message(newOrderMessage(fullOrderDTO))
+                .build());
         log.debug("New order: {} added", fullOrderDTO);
         return fullOrderDTO;
     }
 
     @Override
     public ShortOrderDTO updateOrder(Long id, OrderStatus status) {
-        //TODO send notification when status was changed
         log.debug("Updating order ID{}", id);
         Order order = getOrderIfExists(id);
         order.setStatus(status);
         order = orderRepository.save(order);
+        UserDTO user = userFeignService.getUserById(order.getCustomerId());
+        kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
+                .builder()
+                .email(user.getEmail())
+                .message(String.format(
+                        "The status of order #%s has been changed to '%s'", order.getId().toString(), status.name()))
+                .build());
         log.debug("Order ID{} updated", id);
         return orderMapper.toShortOrderDTO(order);
     }
@@ -167,5 +182,12 @@ public class OrderServiceImpl implements OrderService {
                 .mapToDouble(i -> i.getQuantity() * i.getPrice())
                 .sum());
         return orderDTO;
+    }
+
+    private String newOrderMessage(FullOrderDTO fullOrderDTO) {
+        StringBuilder message = new StringBuilder(String.format("Order #%s has been created.", fullOrderDTO.getId()));
+        fullOrderDTO.getItems()
+                .forEach(i -> message.append("\n").append(i.toString()));
+        return message.append("\n").append("Total value:").append(fullOrderDTO.getFullPrice()).toString();
     }
 }
