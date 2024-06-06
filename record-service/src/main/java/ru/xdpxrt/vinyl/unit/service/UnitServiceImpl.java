@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.dto.unitDTO.UnitDTO;
 import ru.xdpxrt.vinyl.dto.unitDTO.UpdateUnitDTO;
-import ru.xdpxrt.vinyl.error.NotFoundException;
+import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.unit.mapper.UnitMapper;
 import ru.xdpxrt.vinyl.unit.model.Unit;
 import ru.xdpxrt.vinyl.unit.repository.UnitRepository;
@@ -25,7 +25,10 @@ public class UnitServiceImpl implements UnitService {
         Unit unit = getUnitIfExist(id);
         if (updateUnitDTO.getPrice() != null) unit.setPrice(updateUnitDTO.getPrice());
         if (updateUnitDTO.getAdd() != null) unit.setQuantity(unit.getQuantity() + updateUnitDTO.getAdd());
-        if (updateUnitDTO.getSell() != null) unit.setSellCount(unit.getSellCount() - updateUnitDTO.getSell());
+        if (updateUnitDTO.getSell() != null) {
+            unit.setSellCount(unit.getSellCount() + updateUnitDTO.getSell());
+            unit.setQuantity(unit.getQuantity() - updateUnitDTO.getSell());
+        }
         unit = unitRepository.save(unit);
         log.debug("Unit ID{} updated", id);
         return unitMapper.toUnitDTO(unit);

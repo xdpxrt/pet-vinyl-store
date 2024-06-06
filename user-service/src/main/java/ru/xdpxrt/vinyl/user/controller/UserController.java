@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.xdpxrt.vinyl.dto.userDTO.AuthUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.user.service.UserService;
 
@@ -50,8 +52,14 @@ public class UserController {
     }
 
     @GetMapping()
-    public UserDTO getUserByEmail(@RequestParam @Email String email) {
+    public AuthUserDTO getUserByEmail(@RequestParam @Email String email) {
         log.info("Response from GET request on {}/{}", USER_URI, email);
         return userService.getUser(email);
+    }
+
+    @GetMapping(ID_URI + SHORT_URI)
+    public ShortUserDTO getShortUser(@PathVariable @Positive Long id) {
+        log.info("Response from GET request on {}/{}/{}", USER_URI, id, SHORT_URI);
+        return userService.getShortUser(id);
     }
 }

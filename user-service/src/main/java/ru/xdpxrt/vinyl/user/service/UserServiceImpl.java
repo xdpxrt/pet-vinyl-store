@@ -10,9 +10,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.AuthUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
-import ru.xdpxrt.vinyl.error.NotFoundException;
+import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.service.OrderFeignService;
 import ru.xdpxrt.vinyl.user.mapper.UserMapper;
 import ru.xdpxrt.vinyl.user.model.User;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static ru.xdpxrt.vinyl.cons.Config.BIRTHDAY_TOPIC;
+import static ru.xdpxrt.vinyl.cons.Message.USER_BY_EMAIL_NOT_FOUND;
 import static ru.xdpxrt.vinyl.cons.Message.USER_NOT_FOUND;
 
 @Slf4j
@@ -77,9 +80,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUser(String email) {
+    public AuthUserDTO getUser(String email) {
         log.debug("Getting user by email {}", email);
-        return userMapper.toUserDTO(userRepository.findByEmail(email));
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new NotFoundException(String.format(USER_BY_EMAIL_NOT_FOUND, email)));
+        return userMapper.toAuthUserDTO(user);
+    }
+
+    @Override
+    public ShortUserDTO getShortUser(Long userId) {
+        log.debug("Getting user ID{}", userId);
+        User user = getUserIfExists(userId);
+        return userMapper.toShortUserDTO(user);
     }
 
     @Override

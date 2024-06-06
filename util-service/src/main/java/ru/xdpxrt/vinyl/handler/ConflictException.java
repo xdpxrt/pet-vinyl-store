@@ -1,4 +1,4 @@
-package ru.xdpxrt.vinyl.error;
+package ru.xdpxrt.vinyl.handler;
 
 public class ConflictException extends RuntimeException {
     public ConflictException(String massage) {

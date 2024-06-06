@@ -20,7 +20,7 @@ import static ru.xdpxrt.vinyl.cons.URI.*;
 public class UnitController {
     private final UnitService unitService;
 
-    @PatchMapping
+    @PutMapping
     public UnitDTO updateUnit(@RequestBody @Valid UpdateUnitDTO updateUnitDTO,
                               @PathVariable @Positive Long id) {
         log.info("Response from PATCH request on {}/{}", UNIT_URI, id);

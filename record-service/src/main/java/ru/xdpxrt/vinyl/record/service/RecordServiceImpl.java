@@ -16,7 +16,7 @@ import ru.xdpxrt.vinyl.dto.recordDTO.FullRecordDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.NewRecordDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.ShortRecordDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.UpdateRecordDTO;
-import ru.xdpxrt.vinyl.error.NotFoundException;
+import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.genre.model.Genre;
 import ru.xdpxrt.vinyl.genre.repository.GenreRepository;
 import ru.xdpxrt.vinyl.performer.model.Performer;
@@ -58,8 +58,7 @@ public class RecordServiceImpl implements RecordService {
         Record record = recordMapper.toRecord(newRecordDTO);
         record.setPerformer(performer);
         record.setGenres(genres);
-        MultipartFile file = cover;
-        record.setImage(storage.upload(file));
+        record.setImage(storage.upload(cover));
         record = recordRepository.save(record);
         Unit unit = Unit.builder()
                 .record(record)

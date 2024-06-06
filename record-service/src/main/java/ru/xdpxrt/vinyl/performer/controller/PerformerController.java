@@ -46,19 +46,19 @@ public class PerformerController {
 
     @PatchMapping(ID_URI)
     public FullPerformerDTO updatePerformer(@RequestBody @Valid UpdatePerformerDTO updatePerformerDTO,
-                                            @RequestParam @Positive Long id) {
+                                            @PathVariable @Positive Long id) {
         log.info("Response from PATCH request on {}/{}", PERFORMER_URI, id);
         return performerService.updatePerformer(updatePerformerDTO, id);
     }
 
     @DeleteMapping(ID_URI)
-    void deletePerformer(@RequestParam @Positive Long id) {
+    void deletePerformer(@PathVariable @Positive Long id) {
         log.info("Response from DELETE request on {}/{}", PERFORMER_URI, id);
         performerService.deletePerformer(id);
     }
 
     @GetMapping(ID_URI)
-    public FullPerformerDTO getPerformer(@RequestParam @Positive Long id) {
+    public FullPerformerDTO getPerformer(@PathVariable @Positive Long id) {
         log.info("Response from GET request on {}/{}", PERFORMER_URI, id);
         return performerService.getPerformer(id);
     }

@@ -24,7 +24,7 @@ public interface RecordFeignService {
     @GetMapping(RECORD_URI + IDS_URI)
     public List<ShortRecordDTO> getRecordsByIds(@RequestParam List<@Positive Long> ids);
 
-    @PatchMapping(UNIT_URI + ID_URI)
+    @PutMapping(UNIT_URI + ID_URI)
     public UnitDTO updateUnit(@RequestBody @Valid UpdateUnitDTO updateUnitDTO,
                               @PathVariable @Positive Long id);
 

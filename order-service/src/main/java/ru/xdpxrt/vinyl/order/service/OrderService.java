@@ -8,7 +8,7 @@ import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
 import java.util.List;
 
 public interface OrderService {
-    FullOrderDTO addOrder(NewOrderDTO newOrderDTO, Long userId);
+    FullOrderDTO addOrder(NewOrderDTO newOrderDTO, String username);
 
     ShortOrderDTO updateOrder(Long id, OrderStatus status);
 

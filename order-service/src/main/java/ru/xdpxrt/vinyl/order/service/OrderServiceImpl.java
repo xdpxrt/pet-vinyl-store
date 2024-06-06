@@ -7,16 +7,17 @@ import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.cons.OrderStatus;
 import ru.xdpxrt.vinyl.dto.itemDTO.ItemDTO;
 import ru.xdpxrt.vinyl.dto.itemDTO.ShortItemDTO;
+import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.FullOrderDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.NewOrderDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.ShortRecordDTO;
 import ru.xdpxrt.vinyl.dto.unitDTO.UpdateUnitDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.AuthUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
-import ru.xdpxrt.vinyl.error.ConflictException;
-import ru.xdpxrt.vinyl.error.NotFoundException;
-import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
+import ru.xdpxrt.vinyl.handler.ConflictException;
+import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.order.item.model.Item;
 import ru.xdpxrt.vinyl.order.item.repository.ItemRepository;
 import ru.xdpxrt.vinyl.order.mapper.OrderMapper;
@@ -50,9 +51,9 @@ public class OrderServiceImpl implements OrderService {
     private final KafkaTemplate<String, MessageDTO> kafkaTemplate;
 
     @Override
-    public FullOrderDTO addOrder(NewOrderDTO newOrderDTO, Long userId) {
+    public FullOrderDTO addOrder(NewOrderDTO newOrderDTO, String username) {
         log.debug("Adding new order: {}", newOrderDTO);
-        UserDTO user = userFeignService.getUserById(userId);
+        AuthUserDTO user = userFeignService.getUserByEmail(username);
         Map<Long, Integer> recordIdToPcs = newOrderDTO.getItems()
                 .stream()
                 .collect(Collectors.toMap(ShortItemDTO::getRecordId, ShortItemDTO::getPcs));
@@ -84,12 +85,12 @@ public class OrderServiceImpl implements OrderService {
                                 .builder()
                                 .sell(i.getQuantity())
                                 .build(), i.getRecordId()));
-        FullOrderDTO fullOrderDTO = toFullOrderDTO(order, records, recordIdToPcs, user);
-        kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
-                .builder()
-                .email(user.getEmail())
-                .message(newOrderMessage(fullOrderDTO))
-                .build());
+        FullOrderDTO fullOrderDTO = toFullOrderDTO(order, records, recordIdToPcs, toShortUserDTO(user));
+//        kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
+//                .builder()
+//                .email(user.getEmail())
+//                .message(newOrderMessage(fullOrderDTO))
+//                .build());
         log.debug("New order: {} added", fullOrderDTO);
         return fullOrderDTO;
     }
@@ -115,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
     public FullOrderDTO getOrder(Long orderId) {
         log.debug("Getting order ID{}", orderId);
         Order order = getOrderIfExists(orderId);
-        UserDTO user = userFeignService.getUserById(order.getCustomerId());
+        ShortUserDTO user = userFeignService.getShortUser(order.getCustomerId());
         Map<Long, Integer> recordIdToPcs = order.getItems()
                 .stream()
                 .collect(Collectors.toMap(Item::getRecordId, Item::getQuantity));
@@ -139,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toShortOrderDTO(orders);
     }
 
-    private ShortUserDTO toShortUserDTO(UserDTO userDTO) {
+    private ShortUserDTO toShortUserDTO(AuthUserDTO userDTO) {
         return ShortUserDTO
                 .builder()
                 .id(userDTO.getId())
@@ -162,7 +163,7 @@ public class OrderServiceImpl implements OrderService {
     private FullOrderDTO toFullOrderDTO(Order order,
                                         Map<Long, ShortRecordDTO> records,
                                         Map<Long, Integer> recordIdToPcs,
-                                        UserDTO user) {
+                                        ShortUserDTO user) {
         List<ItemDTO> items = records.values()
                 .stream()
                 .map(r -> ItemDTO
@@ -177,7 +178,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
         FullOrderDTO orderDTO = orderMapper.toFullOrderDTO(order);
         orderDTO.setItems(items);
-        orderDTO.setCustomer(toShortUserDTO(user));
+        orderDTO.setCustomer(user);
         orderDTO.setFullPrice(items.stream()
                 .mapToDouble(i -> i.getQuantity() * i.getPrice())
                 .sum());

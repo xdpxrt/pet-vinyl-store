@@ -11,6 +11,8 @@ import ru.xdpxrt.vinyl.cons.Role;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthUserDTO {
+    private Long id;
+    private String name;
     private String email;
     private String password;
     private Role role;

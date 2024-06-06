@@ -11,12 +11,11 @@ import ru.xdpxrt.vinyl.performer.model.Performer;
 import java.util.List;
 
 public interface PerformerRepository extends JpaRepository<Performer, Long>, JpaSpecificationExecutor<Performer> {
-    List<Performer> findAllByCountryIdOrderByName(Integer id, Limit limit);
 
     @Query("SELECT new ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO(p.id, p.name) " +
             "FROM Performer p " +
-            "JOIN Record r " +
-            "JOIN Unit u " +
+            "CROSS JOIN Record r " +
+            "CROSS JOIN Unit u " +
             "WHERE p.name LIKE ?1 " +
             "GROUP BY p.id, p.name " +
             "ORDER BY COUNT(u.sellCount) DESC")
@@ -24,8 +23,8 @@ public interface PerformerRepository extends JpaRepository<Performer, Long>, Jpa
 
     @Query("SELECT new ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO(p.id, p.name) " +
             "FROM Performer p " +
-            "JOIN Record r " +
-            "JOIN Unit u " +
+            "CROSS JOIN Record r " +
+            "CROSS JOIN Unit u " +
             "GROUP BY p.id, p.name " +
             "ORDER BY COUNT(u.sellCount) DESC")
     List<ShortPerformerDTO> findAllOrderBySellCountDesc(PageRequest pageRequest);

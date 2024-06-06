@@ -3,7 +3,6 @@ package ru.xdpxrt.vinyl.country.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.country.mapper.CountryMapper;
@@ -12,13 +11,10 @@ import ru.xdpxrt.vinyl.country.repository.CountryRepository;
 import ru.xdpxrt.vinyl.dto.countryDTO.CountryDTO;
 import ru.xdpxrt.vinyl.dto.countryDTO.FullCountryDTO;
 import ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO;
-import ru.xdpxrt.vinyl.error.ConflictException;
-import ru.xdpxrt.vinyl.error.NotFoundException;
-import ru.xdpxrt.vinyl.performer.mapper.PerformerMapper;
-import ru.xdpxrt.vinyl.performer.model.Performer;
+import ru.xdpxrt.vinyl.handler.ConflictException;
+import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.performer.repository.PerformerRepository;
 
-import java.beans.Transient;
 import java.util.List;
 
 import static ru.xdpxrt.vinyl.cons.Message.COUNTRY_NOT_FOUND;

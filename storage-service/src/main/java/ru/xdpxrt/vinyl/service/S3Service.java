@@ -2,11 +2,10 @@ package ru.xdpxrt.vinyl.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.xdpxrt.vinyl.error.BadRequestException;
-import ru.xdpxrt.vinyl.error.ConflictException;
+import ru.xdpxrt.vinyl.handler.BadRequestException;
+import ru.xdpxrt.vinyl.handler.ConflictException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;

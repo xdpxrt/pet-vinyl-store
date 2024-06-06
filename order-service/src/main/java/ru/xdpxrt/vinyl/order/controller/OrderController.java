@@ -28,14 +28,15 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FullOrderDTO addOrder(@RequestBody @Valid NewOrderDTO newOrderDTO,
-                                 @RequestParam @Positive Long userId) {
+                                 @RequestParam String username) {
+        //TODO extract username from request
         log.info("Response from POST request on {}", ORDER_URI);
-        return orderService.addOrder(newOrderDTO, userId);
+        return orderService.addOrder(newOrderDTO, username);
     }
 
     @PatchMapping(ID_URI)
     public ShortOrderDTO updateOrder(@PathVariable @Positive Long id,
-                                    @RequestParam OrderStatus status) {
+                                     @RequestParam OrderStatus status) {
         log.info("Response from PATCH request on {}/{}", ORDER_URI, id);
         return orderService.updateOrder(id, status);
     }

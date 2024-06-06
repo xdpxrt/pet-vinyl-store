@@ -12,8 +12,8 @@ import ru.xdpxrt.vinyl.dto.performerDTO.FullPerformerDTO;
 import ru.xdpxrt.vinyl.dto.performerDTO.NewPerformerDTO;
 import ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO;
 import ru.xdpxrt.vinyl.dto.performerDTO.UpdatePerformerDTO;
-import ru.xdpxrt.vinyl.error.BadRequestException;
-import ru.xdpxrt.vinyl.error.NotFoundException;
+import ru.xdpxrt.vinyl.handler.BadRequestException;
+import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.performer.mapper.PerformerMapper;
 import ru.xdpxrt.vinyl.performer.model.Performer;
 import ru.xdpxrt.vinyl.performer.repository.PerformerRepository;
@@ -21,7 +21,7 @@ import ru.xdpxrt.vinyl.record.mapper.RecordMapper;
 import ru.xdpxrt.vinyl.record.model.Record;
 import ru.xdpxrt.vinyl.record.repository.RecordRepository;
 
-import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ru.xdpxrt.vinyl.cons.Message.COUNTRY_NOT_FOUND;
