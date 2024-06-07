@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO addUser(@RequestBody @Valid InboundUserDTO inboundUserDTO) {
+    public AuthUserDTO addUser(@RequestBody @Valid InboundUserDTO inboundUserDTO) {
         log.info("Response from POST request on {}", USER_URI);
         return userService.addUser(inboundUserDTO);
     }

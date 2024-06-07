@@ -50,11 +50,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO addUser(InboundUserDTO inboundUserDTO) {
+    public AuthUserDTO addUser(InboundUserDTO inboundUserDTO) {
         log.debug("Adding user {}", inboundUserDTO);
         User user = userRepository.save(userMapper.toUser(inboundUserDTO));
         log.debug("User is added {}", user);
-        return userMapper.toUserDTO(user);
+        return userMapper.toAuthUserDTO(user);
     }
 
     @Override

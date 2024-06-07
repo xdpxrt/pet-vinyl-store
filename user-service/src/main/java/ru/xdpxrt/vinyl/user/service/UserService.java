@@ -6,7 +6,7 @@ import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 
 public interface UserService {
-    UserDTO addUser(InboundUserDTO inboundUserDTO);
+    AuthUserDTO addUser(InboundUserDTO inboundUserDTO);
 
     UserDTO updateUser(InboundUserDTO inboundUserDTO, Long id);
 
