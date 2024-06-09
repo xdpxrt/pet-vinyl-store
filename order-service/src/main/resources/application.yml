@@ -20,6 +20,9 @@ spring:
       mode: always
   kafka:
     producer:
-       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
-       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+logging:
+  level:
+    root: DEBUG

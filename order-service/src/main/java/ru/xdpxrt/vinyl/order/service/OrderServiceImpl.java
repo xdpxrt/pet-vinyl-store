@@ -86,11 +86,11 @@ public class OrderServiceImpl implements OrderService {
                                 .sell(i.getQuantity())
                                 .build(), i.getRecordId()));
         FullOrderDTO fullOrderDTO = toFullOrderDTO(order, records, recordIdToPcs, toShortUserDTO(user));
-//        kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
-//                .builder()
-//                .email(user.getEmail())
-//                .message(newOrderMessage(fullOrderDTO))
-//                .build());
+        kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
+                .builder()
+                .email(user.getEmail())
+                .message(newOrderMessage(fullOrderDTO))
+                .build());
         log.debug("New order: {} added", fullOrderDTO);
         return fullOrderDTO;
     }

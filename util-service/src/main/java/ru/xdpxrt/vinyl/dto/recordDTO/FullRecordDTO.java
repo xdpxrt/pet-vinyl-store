@@ -8,13 +8,14 @@ import ru.xdpxrt.vinyl.dto.genreDTO.GenreDTO;
 import ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FullRecordDTO {
+public class FullRecordDTO implements Serializable {
     private Long id;
     private String title;
     private Integer publicationYear;
