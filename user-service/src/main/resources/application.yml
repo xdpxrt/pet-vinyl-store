@@ -26,4 +26,4 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 logging:
   level:
-    root: info
+    root: debug

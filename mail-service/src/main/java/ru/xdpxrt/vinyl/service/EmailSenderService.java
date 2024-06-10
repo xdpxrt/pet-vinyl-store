@@ -23,8 +23,8 @@ public class EmailSenderService {
     private String subject;
     private final JavaMailSender javaMailSender;
 
-    @KafkaListener(topics = {ORDERS_TOPIC, BIRTHDAY_TOPIC}
-            , groupId = "myGroup")
+    @KafkaListener(topics = {ORDERS_TOPIC, BIRTHDAY_TOPIC},
+            groupId = "myGroup")
     public void sendEmail(MessageDTO messageDTO) {
         log.debug("Sending email to {}", messageDTO.getEmail());
         SimpleMailMessage message = new SimpleMailMessage();

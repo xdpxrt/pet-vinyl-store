@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class RegisterRequest {
     @NotBlank
-    @Size(min = 5, max = 20)
+    @Size(min = 3, max = 20)
     private String name;
     @Email
     @NotNull
