@@ -13,9 +13,9 @@ import ru.xdpxrt.vinyl.dto.orderDTO.NewOrderDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.ShortRecordDTO;
 import ru.xdpxrt.vinyl.dto.unitDTO.UpdateUnitDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.AuthUserDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
 import ru.xdpxrt.vinyl.handler.ConflictException;
 import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.order.item.model.Item;
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public FullOrderDTO addOrder(NewOrderDTO newOrderDTO, String username) {
         log.debug("Adding new order: {}", newOrderDTO);
-        AuthUserDTO user = userFeignService.getUserByEmail(username);
+        UserDTO user = userFeignService.getUserByEmail(username);
         Map<Long, Integer> recordIdToPcs = newOrderDTO.getItems()
                 .stream()
                 .collect(Collectors.toMap(ShortItemDTO::getRecordId, ShortItemDTO::getPcs));
@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = getOrderIfExists(id);
         order.setStatus(status);
         order = orderRepository.save(order);
-        UserDTO user = userFeignService.getUserById(order.getCustomerId());
+        FullUserDTO user = userFeignService.getUserById(order.getCustomerId());
         kafkaTemplate.send(ORDERS_TOPIC, MessageDTO
                 .builder()
                 .email(user.getEmail())
@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toShortOrderDTO(orders);
     }
 
-    private ShortUserDTO toShortUserDTO(AuthUserDTO userDTO) {
+    private ShortUserDTO toShortUserDTO(UserDTO userDTO) {
         return ShortUserDTO
                 .builder()
                 .id(userDTO.getId())

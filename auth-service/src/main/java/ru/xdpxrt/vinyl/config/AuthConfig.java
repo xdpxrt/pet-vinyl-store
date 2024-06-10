@@ -10,11 +10,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.xdpxrt.vinyl.auth.service.Mapper;
 import ru.xdpxrt.vinyl.service.UserFeignService;
 
 @Configuration
 @RequiredArgsConstructor
-public class ApplicationConfig {
+public class AuthConfig {
 
     private final UserFeignService userFeignService;
 
@@ -33,7 +34,8 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return userFeignService::getUserByEmail;
+        return email -> Mapper.toAuthUser(userFeignService.getUserByEmail(email));
+
     }
 
     @Bean

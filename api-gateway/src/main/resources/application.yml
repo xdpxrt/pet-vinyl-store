@@ -1,3 +1,5 @@
+jwt:
+  secret: tmjovwkJBwXhB90yovVP5apAUnTrRI29
 server:
   port: 8080
 spring:
@@ -14,35 +16,64 @@ spring:
           uri: lb://record-service
           predicates:
             - Path=/country/**
+          filters:
+            - AuthFilter
+
         - id: genre
           uri: lb://record-service
           predicates:
             - Path=/genre/**
+          filters:
+            - AuthFilter
+
         - id: performer
           uri: lb://record-service
           predicates:
             - Path=/performer/**
+          filters:
+            - AuthFilter
+
         - id: record
           uri: lb://record-service
           predicates:
             - Path=/record/**
+          filters:
+            - AuthFilter
+
         - id: unit
           uri: lb://record-service
           predicates:
             - Path=/unit/**
+          filters:
+            - AuthFilter
+
         - id: auth
-          uri: lb://user-service
+          uri: lb://auth-service
           predicates:
             - Path=/auth/**
+          filters:
+            - AuthFilter
+
         - id: user
           uri: lb://user-service
           predicates:
             - Path=/user/**
+          filters:
+            - AuthFilter
+
         - id: order
           uri: lb://order-service
           predicates:
             - Path=/order/**
+          filters:
+            - AuthFilter
+
         - id: storage
           uri: lb://s3storage-service
           predicates:
             - Path=/storage/**
+          filters:
+            - AuthFilter
+logging:
+  level:
+    root: debug

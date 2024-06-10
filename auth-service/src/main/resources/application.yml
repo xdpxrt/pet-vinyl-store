@@ -1,7 +1,7 @@
 server:
   port: 8081
 jwt:
-  secret: tmjovwkJBwXhB90yovVP5apAUnTrRI29
+  secret: D3D4E47299E2B4E163FB62FC36DB5D75344DB95949574F0E64D9A404FF680BDA
   lifetime: 86400
 spring:
   application:
@@ -21,3 +21,6 @@ spring:
   sql:
     init:
       mode: always
+logging:
+  level:
+    root: info

@@ -20,7 +20,7 @@ import static ru.xdpxrt.vinyl.cons.URI.AUTH_URI;
 
 @Component
 @RequiredArgsConstructor
-public class JWTAuthenticationFilter extends OncePerRequestFilter {
+public class JWTAuthFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
     private final UserDetailsService userService;
 

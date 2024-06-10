@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.AuthUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.service.OrderFeignService;
 import ru.xdpxrt.vinyl.user.mapper.UserMapper;
@@ -50,16 +50,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public AuthUserDTO addUser(InboundUserDTO inboundUserDTO) {
+    public FullUserDTO addUser(InboundUserDTO inboundUserDTO) {
         log.debug("Adding user {}", inboundUserDTO);
         User user = userRepository.save(userMapper.toUser(inboundUserDTO));
         log.debug("User is added {}", user);
-        return userMapper.toAuthUserDTO(user);
+        return userMapper.toFullUserDTO(user);
     }
 
     @Override
     @Transactional
-    public UserDTO updateUser(InboundUserDTO inboundUserDTO, Long userId) {
+    public FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long userId) {
         log.debug("Updating user ID{}", userId);
         User user = getUserIfExists(userId);
         if (inboundUserDTO.getName() != null) user.setName(inboundUserDTO.getName());
@@ -67,24 +67,24 @@ public class UserServiceImpl implements UserService {
         if (inboundUserDTO.getBirthday() != null) user.setBirthday(inboundUserDTO.getBirthday());
         user = userRepository.save(user);
         log.debug("User ID{} updated", userId);
-        return userMapper.toUserDTO(user);
+        return userMapper.toFullUserDTO(user);
     }
 
     @Override
-    public UserDTO getUser(Long userId) {
+    public FullUserDTO getUser(Long userId) {
         log.debug("Getting user ID{}", userId);
         List<ShortOrderDTO> orders = orderFeignService.getOrdersByCustomer(userId);
-        UserDTO user = userMapper.toUserDTO(getUserIfExists(userId));
+        FullUserDTO user = userMapper.toFullUserDTO(getUserIfExists(userId));
         user.setOrders(orders);
         return user;
     }
 
     @Override
-    public AuthUserDTO getUser(String email) {
+    public UserDTO getUser(String email) {
         log.debug("Getting user by email {}", email);
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new NotFoundException(String.format(USER_BY_EMAIL_NOT_FOUND, email)));
-        return userMapper.toAuthUserDTO(user);
+        return userMapper.toUserDTO(user);
     }
 
     @Override

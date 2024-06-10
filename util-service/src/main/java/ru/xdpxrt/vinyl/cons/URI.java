@@ -16,4 +16,5 @@ public class URI {
     public static final String AUTH_URI = "/auth";
     public static final String REGISTER_URI = "/register";
     public static final String AUTHENTICATE_URI = "/authenticate";
+    public static final String EUREKA_URI = "/eureka";
 }

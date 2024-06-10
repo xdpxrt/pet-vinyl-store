@@ -14,6 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
   sql:
     init:
@@ -23,3 +24,6 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+logging:
+  level:
+    root: info

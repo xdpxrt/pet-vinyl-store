@@ -1,18 +1,18 @@
 package ru.xdpxrt.vinyl.user.service;
 
-import ru.xdpxrt.vinyl.dto.userDTO.AuthUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 
 public interface UserService {
-    AuthUserDTO addUser(InboundUserDTO inboundUserDTO);
+    FullUserDTO addUser(InboundUserDTO inboundUserDTO);
 
-    UserDTO updateUser(InboundUserDTO inboundUserDTO, Long id);
+    FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long id);
 
-    UserDTO getUser(Long id);
+    FullUserDTO getUser(Long id);
 
-    AuthUserDTO getUser(String email);
+    UserDTO getUser(String email);
 
     ShortUserDTO getShortUser(Long id);
 

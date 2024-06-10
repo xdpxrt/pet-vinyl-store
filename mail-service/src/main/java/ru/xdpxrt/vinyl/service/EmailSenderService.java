@@ -21,12 +21,10 @@ public class EmailSenderService {
     private String mailFrom;
     @Value("${spring.mail.subject}")
     private String subject;
-    @Value("${spring.kafka.consumer.properties.group-id}")
-    private String groupId;
     private final JavaMailSender javaMailSender;
 
     @KafkaListener(topics = {ORDERS_TOPIC, BIRTHDAY_TOPIC}
-            , groupId = "${spring.kafka.consumer.properties.group-id}")
+            , groupId = "myGroup")
     public void sendEmail(MessageDTO messageDTO) {
         log.debug("Sending email to {}", messageDTO.getEmail());
         SimpleMailMessage message = new SimpleMailMessage();
