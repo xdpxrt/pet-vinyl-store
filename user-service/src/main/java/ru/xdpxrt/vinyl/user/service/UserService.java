@@ -13,7 +13,7 @@ public interface UserService {
 
     FullUserDTO getUser(Long id, Authentication authentication);
 
-    UserDTO getUser(String email, Authentication authentication);
+    UserDTO getUser(String email);
 
     ShortUserDTO getShortUser(Long id, Authentication authentication);
 

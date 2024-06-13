@@ -54,10 +54,9 @@ public class UserController {
     }
 
     @GetMapping()
-    public UserDTO getUserByEmail(@RequestParam @Email String email,
-                                  Authentication authentication) {
+    public UserDTO getUserByEmail(@RequestParam @Email String email) {
         log.info("Response from GET request on {}/{}", USER_URI, email);
-        return userService.getUser(email, authentication);
+        return userService.getUser(email);
     }
 
     @GetMapping(ID_URI + SHORT_URI)

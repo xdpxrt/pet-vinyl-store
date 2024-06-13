@@ -61,9 +61,8 @@ public class OrderController {
 
 
     @GetMapping(USER_URI + ID_URI)
-    public List<ShortOrderDTO> getOrdersByCustomer(@PathVariable @Positive Long id,
-                                                   Authentication authentication) {
+    public List<ShortOrderDTO> getOrdersByCustomer(@PathVariable @Positive Long id) {
         log.info("Response from GET request on {}/{}", ORDER_URI + USER_URI, id);
-        return orderService.getOrdersByCustomerId(id, authentication);
+        return orderService.getOrdersByCustomerId(id);
     }
 }

@@ -92,10 +92,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Cacheable(cacheNames = "user::getByEmail", key = "#email")
-    public UserDTO getUser(String email, Authentication authentication) {
+    public UserDTO getUser(String email) {
         log.debug("Getting user by email {}", email);
         User user = getUserByEmailIfExists(email);
-        checkAccess(user, authentication);
         return userMapper.toUserDTO(user);
     }
 

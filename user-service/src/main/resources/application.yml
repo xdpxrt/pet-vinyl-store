@@ -36,4 +36,5 @@ spring:
         port: ${REDIS_PORT:6379}
 logging:
   level:
-    root: info
+    root: debug
+    eureka: info

@@ -17,5 +17,5 @@ public interface OrderService {
 
     void deleteOrder(Long orderId, Authentication authentication);
 
-    List<ShortOrderDTO> getOrdersByCustomerId(Long userId, Authentication authentication);
+    List<ShortOrderDTO> getOrdersByCustomerId(Long userId);
 }

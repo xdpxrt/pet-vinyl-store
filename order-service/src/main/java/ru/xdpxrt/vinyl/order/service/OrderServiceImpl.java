@@ -139,10 +139,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<ShortOrderDTO> getOrdersByCustomerId(Long userId, Authentication authentication) {
+    public List<ShortOrderDTO> getOrdersByCustomerId(Long userId) {
         log.debug("Getting orders by customer ID{}", userId);
-        FullUserDTO user = userFeignService.getUserById(userId);
-        checkAccess(user.getEmail(), authentication);
         List<Order> orders = orderRepository.findAllByCustomerId(userId);
         return orderMapper.toShortOrderDTO(orders);
     }

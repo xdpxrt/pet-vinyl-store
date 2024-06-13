@@ -8,4 +8,4 @@ aws:
   bucket: xdpxrt.vinyl.bucket
   credentials:
     access-key: AKIATCKARWLKMVK5RIOS
-    secret_key: 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
+    secret_key: ENC(k6wbYtgFKM9+gJpTOM4IXgn0ZmCC6nkblSRrvJT830YWGILZiWAJOTdtRb9FoSyw/Xd3gpx5vMwHuXGgFNivoyd24bSZmug96Owfv1Ah5/Q=)
