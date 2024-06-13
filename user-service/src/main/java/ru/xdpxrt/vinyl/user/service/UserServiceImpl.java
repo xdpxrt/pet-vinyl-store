@@ -7,13 +7,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.xdpxrt.vinyl.cons.Role;
 import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
+import ru.xdpxrt.vinyl.handler.ForbiddenException;
 import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.service.OrderFeignService;
 import ru.xdpxrt.vinyl.user.mapper.UserMapper;
@@ -59,9 +62,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long userId) {
+    public FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long userId, Authentication authentication) {
         log.debug("Updating user ID{}", userId);
         User user = getUserIfExists(userId);
+        checkAccess(user, authentication);
         if (inboundUserDTO.getName() != null) user.setName(inboundUserDTO.getName());
         if (inboundUserDTO.getEmail() != null) user.setEmail(inboundUserDTO.getEmail());
         if (inboundUserDTO.getBirthday() != null) user.setBirthday(inboundUserDTO.getBirthday());
@@ -71,19 +75,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public FullUserDTO getUser(Long userId) {
+    public FullUserDTO getUser(Long userId, Authentication authentication) {
         log.debug("Getting user ID{}", userId);
+        User user = getUserIfExists(userId);
+        checkAccess(user, authentication);
+        FullUserDTO userDTO = userMapper.toFullUserDTO(user);
         List<ShortOrderDTO> orders = orderFeignService.getOrdersByCustomer(userId);
-        FullUserDTO user = userMapper.toFullUserDTO(getUserIfExists(userId));
-        user.setOrders(orders);
-        return user;
+        userDTO.setOrders(orders);
+        return userDTO;
     }
 
     @Override
     public UserDTO getUser(String email) {
         log.debug("Getting user by email {}", email);
-        User user = userRepository.findByEmail(email).orElseThrow(() ->
-                new NotFoundException(String.format(USER_BY_EMAIL_NOT_FOUND, email)));
+        User user = getUserByEmailIfExists(email);
         return userMapper.toUserDTO(user);
     }
 
@@ -96,9 +101,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId, Authentication authentication) {
         log.debug("Deleting user ID{}", userId);
-        getUserIfExists(userId);
+        User user = getUserIfExists(userId);
+        checkAccess(user, authentication);
         userRepository.deleteById(userId);
         log.debug("User ID{} is deleted", userId);
     }
@@ -106,6 +112,20 @@ public class UserServiceImpl implements UserService {
     private User getUserIfExists(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format(USER_NOT_FOUND, userId)));
+    }
+
+    private User getUserByEmailIfExists(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new NotFoundException(String.format(USER_BY_EMAIL_NOT_FOUND, email)));
+    }
+
+    private void checkAccess(User user, Authentication authentication) {
+        String email = authentication.getName();
+        String authorities = authentication.getAuthorities().toString();
+        String role = authorities.substring(1, authorities.length() - 1);
+        if (!user.getEmail().equals(email) && !Role.ADMIN.name().equals(role)) {
+            throw new ForbiddenException("Only admins or owner has access");
+        }
     }
 
     private MessageDTO getCongratsMessageDTO(User user) {

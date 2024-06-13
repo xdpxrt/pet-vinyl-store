@@ -6,13 +6,18 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.user.service.UserService;
+
+import java.security.Principal;
 
 import static ru.xdpxrt.vinyl.cons.URI.*;
 
@@ -33,22 +38,23 @@ public class UserController {
 
     @PatchMapping(ID_URI)
     public FullUserDTO updateUser(@RequestBody @Valid InboundUserDTO inboundUserDTO,
-                                  @PathVariable @Positive Long id) {
+                                  @PathVariable @Positive Long id,
+                                  Authentication authentication) {
         log.info("Response from PATCH request on {}", USER_URI);
-        return userService.updateUser(inboundUserDTO, id);
+        return userService.updateUser(inboundUserDTO, id, authentication);
     }
 
     @DeleteMapping(ID_URI)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable @Positive Long id) {
+    public void deleteUser(@PathVariable @Positive Long id, Authentication authentication) {
         log.info("Response from DELETE request on {}/{}", USER_URI, id);
-        userService.deleteUser(id);
+        userService.deleteUser(id, authentication);
     }
 
     @GetMapping(ID_URI)
-    public FullUserDTO getUserById(@PathVariable @Positive Long id) {
+    public FullUserDTO getUserById(@PathVariable @Positive Long id, Authentication authentication) {
         log.info("Response from GET request on {}/{}", USER_URI, id);
-        return userService.getUser(id);
+        return userService.getUser(id, authentication);
     }
 
     @GetMapping()

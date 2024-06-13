@@ -51,8 +51,6 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
-          filters:
-            - AuthFilter
 
         - id: user
           uri: lb://user-service
@@ -76,4 +74,4 @@ spring:
             - AuthFilter
 logging:
   level:
-    root: debug
+    root: info

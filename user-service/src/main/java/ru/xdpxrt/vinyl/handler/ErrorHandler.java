@@ -14,6 +14,18 @@ import static ru.xdpxrt.vinyl.cons.Config.FORMATTER;
 public class ErrorHandler {
 
     @ExceptionHandler
+    @ResponseStatus(UNAUTHORIZED)
+    public ApiError handleUnauthorizedException(UnauthorizedException e) {
+        return new ApiError(UNAUTHORIZED.name(), e.getMessage(), LocalDateTime.now().format(FORMATTER));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(FORBIDDEN)
+    public ApiError handleForbiddenException(ForbiddenException e) {
+        return new ApiError(FORBIDDEN.name(), e.getMessage(), LocalDateTime.now().format(FORMATTER));
+    }
+
+    @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
     public ApiError handleValidationException(BadRequestException e) {
         return new ApiError(BAD_REQUEST.name(), e.getMessage(), LocalDateTime.now().format(FORMATTER));

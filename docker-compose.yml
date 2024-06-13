@@ -1,9 +1,9 @@
 version: '3.1'
 services:
-  discover-service:
-    build: discover-service
-    image: discover-service
-    container_name: discover-service
+  discovery-service:
+    build: discovery-service
+    image: discovery-service
+    container_name: discovery-service
     ports:
       - "8761:8761"
     environment:
@@ -28,7 +28,7 @@ services:
     ports:
       - "8090:8090"
     depends_on:
-      - discover-service
+      - discovery-service
       - records-db
       - storage-service
       - redis

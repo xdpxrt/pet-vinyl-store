@@ -3,16 +3,14 @@ package ru.xdpxrt.vinyl.auth.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.xdpxrt.vinyl.auth.model.AuthUser;
 import ru.xdpxrt.vinyl.auth.model.AuthRequest;
 import ru.xdpxrt.vinyl.auth.model.AuthResponse;
+import ru.xdpxrt.vinyl.auth.model.AuthUser;
 import ru.xdpxrt.vinyl.auth.model.RegisterRequest;
 import ru.xdpxrt.vinyl.config.JWTService;
 import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
-import ru.xdpxrt.vinyl.handler.UnauthorizedException;
 import ru.xdpxrt.vinyl.service.UserFeignService;
 
 import static ru.xdpxrt.vinyl.auth.service.Mapper.toAuthUser;
@@ -37,12 +35,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse authenticate(AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()));
-        if (authentication.isAuthenticated()) return getAuthenticationResponse(request.getEmail());
-        else throw new UnauthorizedException("Invalid email or password");
+        return getAuthenticationResponse(request.getEmail());
     }
 
     private AuthResponse getAuthenticationResponse(String email) {

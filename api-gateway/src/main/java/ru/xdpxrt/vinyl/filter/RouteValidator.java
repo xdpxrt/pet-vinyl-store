@@ -13,10 +13,11 @@ import static ru.xdpxrt.vinyl.cons.URI.*;
 public class RouteValidator {
 
     public static final List<String> openApiEndpoints = List.of(
-//            AUTH_URI + REGISTER_URI,
-            "/auth/register",
+            AUTH_URI + "/**",
             EUREKA_URI);
 
     public Predicate<ServerHttpRequest> isSecured =
-            request -> openApiEndpoints.stream()
-                    .noneMatch(uri -> request.getURI().getPath().contains(uri));}
+            request -> openApiEndpoints
+                    .stream()
+                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+}

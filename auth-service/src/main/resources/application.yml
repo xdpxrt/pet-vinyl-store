@@ -2,10 +2,10 @@ server:
   port: 8081
 jwt:
   secret: D3D4E47299E2B4E163FB62FC36DB5D75344DB95949574F0E64D9A404FF680BDA
-  lifetime: 86400
+  lifetime: 86400000
 spring:
   application:
     name: auth-service
 logging:
   level:
-    root: debug
+    root: info
