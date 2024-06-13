@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.xdpxrt.vinyl.dto.genreDTO.FullGenreDTO;
@@ -28,6 +29,7 @@ public class GenreController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public GenreDTO addGenre(@RequestBody @Valid GenreDTO genreDTO) {
         log.info("Response from POST request on {}", GENRE_URI);
         return genreService.addGenre(genreDTO);
@@ -41,6 +43,7 @@ public class GenreController {
     }
 
     @PatchMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public GenreDTO updateGenre(@RequestBody @Valid GenreDTO genreDTO,
                                 @PathVariable @Positive Integer id) {
         log.info("Response from PATCH request on {}/{}", GENRE_URI, id);
@@ -48,6 +51,7 @@ public class GenreController {
     }
 
     @DeleteMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteGenre(@PathVariable @Positive Integer id) {
         log.info("Response from DELETE request on {}/{}", GENRE_URI, id);
         genreService.deleteGenre(id);

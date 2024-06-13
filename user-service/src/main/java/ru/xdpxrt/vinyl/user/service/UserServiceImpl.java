@@ -3,6 +3,9 @@ package ru.xdpxrt.vinyl.user.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -62,56 +65,62 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long userId, Authentication authentication) {
-        log.debug("Updating user ID{}", userId);
-        User user = getUserIfExists(userId);
+    @CachePut(cacheNames = "user::getById", key = "#id")
+    public FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long id, Authentication authentication) {
+        log.debug("Updating user ID{}", id);
+        User user = getUserIfExists(id);
         checkAccess(user, authentication);
         if (inboundUserDTO.getName() != null) user.setName(inboundUserDTO.getName());
         if (inboundUserDTO.getEmail() != null) user.setEmail(inboundUserDTO.getEmail());
         if (inboundUserDTO.getBirthday() != null) user.setBirthday(inboundUserDTO.getBirthday());
         user = userRepository.save(user);
-        log.debug("User ID{} updated", userId);
+        log.debug("User ID{} updated", id);
         return userMapper.toFullUserDTO(user);
     }
 
     @Override
-    public FullUserDTO getUser(Long userId, Authentication authentication) {
-        log.debug("Getting user ID{}", userId);
-        User user = getUserIfExists(userId);
+    @Cacheable(cacheNames = "user::getById", key = "#id")
+    public FullUserDTO getUser(Long id, Authentication authentication) {
+        log.debug("Getting user ID{}", id);
+        User user = getUserIfExists(id);
         checkAccess(user, authentication);
         FullUserDTO userDTO = userMapper.toFullUserDTO(user);
-        List<ShortOrderDTO> orders = orderFeignService.getOrdersByCustomer(userId);
+        List<ShortOrderDTO> orders = orderFeignService.getOrdersByCustomer(id);
         userDTO.setOrders(orders);
         return userDTO;
     }
 
     @Override
-    public UserDTO getUser(String email) {
+    @Cacheable(cacheNames = "user::getByEmail", key = "#email")
+    public UserDTO getUser(String email, Authentication authentication) {
         log.debug("Getting user by email {}", email);
         User user = getUserByEmailIfExists(email);
+        checkAccess(user, authentication);
         return userMapper.toUserDTO(user);
     }
 
     @Override
-    public ShortUserDTO getShortUser(Long userId) {
+    public ShortUserDTO getShortUser(Long userId, Authentication authentication) {
         log.debug("Getting user ID{}", userId);
         User user = getUserIfExists(userId);
+        checkAccess(user, authentication);
         return userMapper.toShortUserDTO(user);
     }
 
     @Override
     @Transactional
-    public void deleteUser(Long userId, Authentication authentication) {
-        log.debug("Deleting user ID{}", userId);
-        User user = getUserIfExists(userId);
+    @CacheEvict(cacheNames = "user::getById", key = "#id")
+    public void deleteUser(Long id, Authentication authentication) {
+        log.debug("Deleting user ID{}", id);
+        User user = getUserIfExists(id);
         checkAccess(user, authentication);
-        userRepository.deleteById(userId);
-        log.debug("User ID{} is deleted", userId);
+        userRepository.deleteById(id);
+        log.debug("User ID{} is deleted", id);
     }
 
-    private User getUserIfExists(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format(USER_NOT_FOUND, userId)));
+    private User getUserIfExists(Long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
     private User getUserByEmailIfExists(String email) {

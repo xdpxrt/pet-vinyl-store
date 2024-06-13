@@ -7,7 +7,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 @Configuration
-public class Config {
+public class RedisConfig {
 
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {

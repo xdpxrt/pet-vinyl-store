@@ -6,9 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
@@ -16,8 +14,6 @@ import ru.xdpxrt.vinyl.dto.userDTO.InboundUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.user.service.UserService;
-
-import java.security.Principal;
 
 import static ru.xdpxrt.vinyl.cons.URI.*;
 
@@ -58,14 +54,16 @@ public class UserController {
     }
 
     @GetMapping()
-    public UserDTO getUserByEmail(@RequestParam @Email String email) {
+    public UserDTO getUserByEmail(@RequestParam @Email String email,
+                                  Authentication authentication) {
         log.info("Response from GET request on {}/{}", USER_URI, email);
-        return userService.getUser(email);
+        return userService.getUser(email, authentication);
     }
 
     @GetMapping(ID_URI + SHORT_URI)
-    public ShortUserDTO getShortUser(@PathVariable @Positive Long id) {
+    public ShortUserDTO getShortUser(@PathVariable @Positive Long id,
+                                     Authentication authentication) {
         log.info("Response from GET request on {}/{}/{}", USER_URI, id, SHORT_URI);
-        return userService.getShortUser(id);
+        return userService.getShortUser(id, authentication);
     }
 }

@@ -10,7 +10,8 @@ import ru.xdpxrt.vinyl.dto.unitDTO.UnitDTO;
 import ru.xdpxrt.vinyl.dto.unitDTO.UpdateUnitDTO;
 import ru.xdpxrt.vinyl.unit.service.UnitService;
 
-import static ru.xdpxrt.vinyl.cons.URI.*;
+import static ru.xdpxrt.vinyl.cons.URI.ID_URI;
+import static ru.xdpxrt.vinyl.cons.URI.UNIT_URI;
 
 @Slf4j
 @Validated

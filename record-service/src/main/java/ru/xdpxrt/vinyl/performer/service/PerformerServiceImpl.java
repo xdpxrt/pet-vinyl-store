@@ -21,7 +21,6 @@ import ru.xdpxrt.vinyl.record.mapper.RecordMapper;
 import ru.xdpxrt.vinyl.record.model.Record;
 import ru.xdpxrt.vinyl.record.repository.RecordRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.xdpxrt.vinyl.cons.Message.COUNTRY_NOT_FOUND;

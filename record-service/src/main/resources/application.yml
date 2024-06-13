@@ -1,5 +1,7 @@
 server:
   port: 8090
+jwt:
+  secret: D3D4E47299E2B4E163FB62FC36DB5D75344DB95949574F0E64D9A404FF680BDA
 spring:
   application:
     name: record-service

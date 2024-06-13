@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,7 @@ public class RecordController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FullRecordDTO addRecord(@RequestPart @Valid NewRecordDTO newRecordDTO,
                                    @RequestPart @NotNull MultipartFile cover) {
         log.info("Response from POST request on {}", RECORD_URI);
@@ -54,6 +56,7 @@ public class RecordController {
     }
 
     @PatchMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FullRecordDTO updateRecord(@RequestPart @Valid UpdateRecordDTO updateRecordDTO,
                                       @RequestPart(required = false) MultipartFile cover,
                                       @PathVariable @Positive Long id) {
@@ -62,6 +65,7 @@ public class RecordController {
     }
 
     @DeleteMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteRecord(@PathVariable @Positive Long id) {
         log.info("Response from DELETE request on {}/{}", RECORD_URI, id);
         recordService.deleteRecord(id);

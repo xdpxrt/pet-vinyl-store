@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.xdpxrt.vinyl.dto.genreDTO.GenreDTO;
 import ru.xdpxrt.vinyl.dto.performerDTO.ShortPerformerDTO;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Set;
 

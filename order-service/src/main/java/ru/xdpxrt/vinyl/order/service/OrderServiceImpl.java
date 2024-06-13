@@ -3,8 +3,10 @@ package ru.xdpxrt.vinyl.order.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.xdpxrt.vinyl.cons.OrderStatus;
+import ru.xdpxrt.vinyl.cons.Role;
 import ru.xdpxrt.vinyl.dto.itemDTO.ItemDTO;
 import ru.xdpxrt.vinyl.dto.itemDTO.ShortItemDTO;
 import ru.xdpxrt.vinyl.dto.messageDTO.MessageDTO;
@@ -13,10 +15,11 @@ import ru.xdpxrt.vinyl.dto.orderDTO.NewOrderDTO;
 import ru.xdpxrt.vinyl.dto.orderDTO.ShortOrderDTO;
 import ru.xdpxrt.vinyl.dto.recordDTO.ShortRecordDTO;
 import ru.xdpxrt.vinyl.dto.unitDTO.UpdateUnitDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
-import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
 import ru.xdpxrt.vinyl.dto.userDTO.FullUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.ShortUserDTO;
+import ru.xdpxrt.vinyl.dto.userDTO.UserDTO;
 import ru.xdpxrt.vinyl.handler.ConflictException;
+import ru.xdpxrt.vinyl.handler.ForbiddenException;
 import ru.xdpxrt.vinyl.handler.NotFoundException;
 import ru.xdpxrt.vinyl.order.item.model.Item;
 import ru.xdpxrt.vinyl.order.item.repository.ItemRepository;
@@ -47,13 +50,13 @@ public class OrderServiceImpl implements OrderService {
     private final RecordFeignService recordFeignService;
 
     private final OrderMapper orderMapper;
-
     private final KafkaTemplate<String, MessageDTO> kafkaTemplate;
 
     @Override
-    public FullOrderDTO addOrder(NewOrderDTO newOrderDTO, String username) {
+    public FullOrderDTO addOrder(NewOrderDTO newOrderDTO, Authentication authentication) {
         log.debug("Adding new order: {}", newOrderDTO);
-        UserDTO user = userFeignService.getUserByEmail(username);
+        String email = authentication.getName();
+        UserDTO user = userFeignService.getUserByEmail(email);
         Map<Long, Integer> recordIdToPcs = newOrderDTO.getItems()
                 .stream()
                 .collect(Collectors.toMap(ShortItemDTO::getRecordId, ShortItemDTO::getPcs));
@@ -113,10 +116,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public FullOrderDTO getOrder(Long orderId) {
+    public FullOrderDTO getOrder(Long orderId, Authentication authentication) {
         log.debug("Getting order ID{}", orderId);
         Order order = getOrderIfExists(orderId);
         ShortUserDTO user = userFeignService.getShortUser(order.getCustomerId());
+        checkAccess(user.getEmail(), authentication);
         Map<Long, Integer> recordIdToPcs = order.getItems()
                 .stream()
                 .collect(Collectors.toMap(Item::getRecordId, Item::getQuantity));
@@ -125,19 +129,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
+    public void deleteOrder(Long orderId, Authentication authentication) {
         log.debug("Deleting order ID{}", id);
         Order order = getOrderIfExists(orderId);
+        ShortUserDTO user = userFeignService.getShortUser(order.getCustomerId());
+        checkAccess(user.getEmail(), authentication);
         orderRepository.delete(order);
         log.debug("Order ID{} deleted", orderId);
     }
 
     @Override
-    public List<ShortOrderDTO> getOrdersByCustomerId(Long userId) {
+    public List<ShortOrderDTO> getOrdersByCustomerId(Long userId, Authentication authentication) {
         log.debug("Getting orders by customer ID{}", userId);
-        userFeignService.getUserById(userId);
+        FullUserDTO user = userFeignService.getUserById(userId);
+        checkAccess(user.getEmail(), authentication);
         List<Order> orders = orderRepository.findAllByCustomerId(userId);
         return orderMapper.toShortOrderDTO(orders);
+    }
+
+    private void checkAccess(String userEmail, Authentication authentication) {
+        String email = authentication.getName();
+        String authorities = authentication.getAuthorities().toString();
+        String role = authorities.substring(1, authorities.length() - 1);
+        if (!userEmail.equals(email) && !Role.ADMIN.name().equals(role)) {
+            throw new ForbiddenException("Only admins or owner has access");
+        }
     }
 
     private ShortUserDTO toShortUserDTO(UserDTO userDTO) {

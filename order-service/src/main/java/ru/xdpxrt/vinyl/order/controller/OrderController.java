@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.xdpxrt.vinyl.cons.OrderStatus;
@@ -28,36 +30,40 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FullOrderDTO addOrder(@RequestBody @Valid NewOrderDTO newOrderDTO,
-                                 @RequestParam String username) {
-        //TODO extract username from request
+                                 Authentication authentication) {
         log.info("Response from POST request on {}", ORDER_URI);
-        return orderService.addOrder(newOrderDTO, username);
+        return orderService.addOrder(newOrderDTO, authentication);
     }
 
     @PatchMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ShortOrderDTO updateOrder(@PathVariable @Positive Long id,
-                                     @RequestParam OrderStatus status) {
+                                     @RequestParam OrderStatus status,
+                                     Authentication authentication) {
         log.info("Response from PATCH request on {}/{}", ORDER_URI, id);
         return orderService.updateOrder(id, status);
     }
 
     @GetMapping(ID_URI)
-    public FullOrderDTO getOrderById(@PathVariable @Positive Long id) {
+    public FullOrderDTO getOrderById(@PathVariable @Positive Long id,
+                                     Authentication authentication) {
         log.info("Response from GET request on {}/{}", ORDER_URI, id);
-        return orderService.getOrder(id);
+        return orderService.getOrder(id, authentication);
     }
 
     @DeleteMapping(ID_URI)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable @Positive Long id) {
+    public void deleteOrder(@PathVariable @Positive Long id,
+                            Authentication authentication) {
         log.info("Response from DELETE request on {}/{}", ORDER_URI, id);
-        orderService.deleteOrder(id);
+        orderService.deleteOrder(id, authentication);
     }
 
 
     @GetMapping(USER_URI + ID_URI)
-    public List<ShortOrderDTO> getOrdersByCustomer(@PathVariable @Positive Long id) {
+    public List<ShortOrderDTO> getOrdersByCustomer(@PathVariable @Positive Long id,
+                                                   Authentication authentication) {
         log.info("Response from GET request on {}/{}", ORDER_URI + USER_URI, id);
-        return orderService.getOrdersByCustomerId(id);
+        return orderService.getOrdersByCustomerId(id, authentication);
     }
 }

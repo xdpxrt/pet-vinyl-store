@@ -20,6 +20,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(FORBIDDEN)
+    public ApiError handleForbiddenException(ForbiddenException e) {
+        return new ApiError(FORBIDDEN.name(), e.getMessage(), LocalDateTime.now().format(FORMATTER));
+    }
+
+    @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
     public ApiError handleValidationException(BadRequestException e) {
         return new ApiError(BAD_REQUEST.name(), e.getMessage(), LocalDateTime.now().format(FORMATTER));

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.xdpxrt.vinyl.country.service.CountryService;
@@ -28,6 +29,7 @@ public class CountryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CountryDTO addCountry(@RequestBody @Valid CountryDTO countryDTO) {
         log.info("Response from POST request on {}", COUNTRY_URI);
         return countryService.addCountry(countryDTO);
@@ -41,6 +43,7 @@ public class CountryController {
     }
 
     @PatchMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CountryDTO updateCountry(@RequestBody @Valid CountryDTO countryDTO,
                                     @PathVariable @Positive Integer id) {
         log.info("Response from PATCH request on {}/{}", COUNTRY_URI, id);
@@ -48,6 +51,7 @@ public class CountryController {
     }
 
     @DeleteMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteCountry(@PathVariable @Positive Integer id) {
         log.info("Response from DELETE request on {}/{}", COUNTRY_URI, id);
         countryService.deleteCountry(id);

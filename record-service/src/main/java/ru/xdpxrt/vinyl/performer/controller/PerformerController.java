@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.xdpxrt.vinyl.cons.SortType;
@@ -30,6 +31,7 @@ public class PerformerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FullPerformerDTO addPerformer(@RequestBody @Valid NewPerformerDTO newPerformerDTO) {
         log.info("Response from POST request on {}", PERFORMER_URI);
         return performerService.addPerformer(newPerformerDTO);
@@ -45,6 +47,7 @@ public class PerformerController {
     }
 
     @PatchMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FullPerformerDTO updatePerformer(@RequestBody @Valid UpdatePerformerDTO updatePerformerDTO,
                                             @PathVariable @Positive Long id) {
         log.info("Response from PATCH request on {}/{}", PERFORMER_URI, id);
@@ -52,6 +55,7 @@ public class PerformerController {
     }
 
     @DeleteMapping(ID_URI)
+    @PreAuthorize("hasAuthority('ADMIN')")
     void deletePerformer(@PathVariable @Positive Long id) {
         log.info("Response from DELETE request on {}/{}", PERFORMER_URI, id);
         performerService.deletePerformer(id);

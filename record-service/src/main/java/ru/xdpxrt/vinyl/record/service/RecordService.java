@@ -13,7 +13,7 @@ public interface RecordService {
     FullRecordDTO addRecord(NewRecordDTO newRecordDTO, MultipartFile cover);
 
     List<ShortRecordDTO> getRecords(SortType sortType, String text, Long genreId, Integer fromYear, Integer toYear,
-                                    Double fromPrice, Double toPrice, Boolean onlyAvailable, Integer from, Integer Size);
+                                    Double fromPrice, Double toPrice, Boolean onlyAvailable, Integer from, Integer size);
 
     FullRecordDTO updateRecord(UpdateRecordDTO updateRecordDTO, MultipartFile file, Long id);
 

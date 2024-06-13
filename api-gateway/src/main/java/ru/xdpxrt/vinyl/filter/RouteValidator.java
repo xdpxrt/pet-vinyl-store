@@ -1,13 +1,13 @@
 package ru.xdpxrt.vinyl.filter;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-import static ru.xdpxrt.vinyl.cons.URI.*;
+import static ru.xdpxrt.vinyl.cons.URI.AUTH_URI;
+import static ru.xdpxrt.vinyl.cons.URI.EUREKA_URI;
 
 @Service
 public class RouteValidator {

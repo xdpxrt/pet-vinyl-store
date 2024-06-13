@@ -1,6 +1,5 @@
 package ru.xdpxrt.vinyl.performer.repository;
 
-import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
