@@ -26,7 +26,7 @@ import java.util.function.Function;
 public class JWTFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret}")
-    private String secret = "D3D4E47299E2B4E163FB62FC36DB5D75344DB95949574F0E64D9A404FF680BDA";
+    private String secret;
 
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request,

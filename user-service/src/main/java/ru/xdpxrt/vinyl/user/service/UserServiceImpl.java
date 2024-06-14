@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @CachePut(cacheNames = "user::getById", key = "#id")
+//    @CachePut(cacheNames = "user::getById", key = "#id")
     public FullUserDTO updateUser(InboundUserDTO inboundUserDTO, Long id, Authentication authentication) {
         log.debug("Updating user ID{}", id);
         User user = getUserIfExists(id);
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(cacheNames = "user::getById", key = "#id")
+//    @Cacheable(cacheNames = "user::getById", key = "#id")
     public FullUserDTO getUser(Long id, Authentication authentication) {
         log.debug("Getting user ID{}", id);
         User user = getUserIfExists(id);
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(cacheNames = "user::getByEmail", key = "#email")
+//    @Cacheable(cacheNames = "user::getByEmail", key = "#email")
     public UserDTO getUser(String email) {
         log.debug("Getting user by email {}", email);
         User user = getUserByEmailIfExists(email);
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "user::getById", key = "#id")
+//    @CacheEvict(cacheNames = "user::getById", key = "#id")
     public void deleteUser(Long id, Authentication authentication) {
         log.debug("Deleting user ID{}", id);
         User user = getUserIfExists(id);

@@ -1,4 +1,4 @@
-package ru.xdpxrt.vinyl.filter;
+package ru.xdpxrt.vinyl.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

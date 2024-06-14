@@ -14,6 +14,25 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <properties>
+    <java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring-cloud.version>2023.0.1</spring-cloud.version>
+    <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+    <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+    <jasypt-spring-boot-starter.version>3.0.5</jasypt-spring-boot-starter.version>
+    <spring-cloud-starter-netflix-eureka-client.version>4.1.1</spring-cloud-starter-netflix-eureka-client.version>
+    <spring-kafka.version>3.1.2</spring-kafka.version>
+    <spring-boot-starter-data-redis.version>3.1.5</spring-boot-starter-data-redis.version>
+    <jjwt.version>0.11.5</jjwt.version>
+    <spring-data-redis.version>3.2.0</spring-data-redis.version>
+    <jedis.version>5.1.2</jedis.version>
+
+  </properties>
+
   <modules>
     <module>api-gateway</module>
     <module>auth-service</module>
@@ -25,9 +44,4 @@
     <module>storage-service</module>
     <module>mail-service</module>
   </modules>
-
-  <properties>
-    <java.version>17</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 </project>

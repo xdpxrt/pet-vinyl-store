@@ -1,7 +1,7 @@
 server:
   port: 8082
 jwt:
-  secret: D3D4E47299E2B4E163FB62FC36DB5D75344DB95949574F0E64D9A404FF680BDA
+  secret: ENC(Y5+nMGI0UCr5p44U+K47gUvn4SU7CrFtntCMWvwt+8qMEk/FqJfZWLoNLXeMEL01xhv9mBSAkxjrr8cUyPPHc8PP9PkSvDuhuWU+/ST7ajxN2WWmzhdd8xDXYiBa+TrWJSo2ithd2hcX4EDyfR34wQ==)
 spring:
   application:
     name: user-service
@@ -26,15 +26,18 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    cache:
-      type: redis
-      redis:
-        time-to-live: 60000
-    data:
-      redis:
-        host: ${REDIS_HOST:localhost}
-        port: ${REDIS_PORT:6379}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 logging:
   level:
     root: debug
     eureka: info
+jasypt:
+  encryptor:
+    password: spatifilum

@@ -6,8 +6,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: xdpxrt@gmail.com
-    password: rmmudrapytxgggzh
+    username: ENC(rBSXTV7/U3M1ail5/zBd8vL0PbDrsUs7P+qlt+ezKjoS4/85DD1puuMGzQHqIy5RjrW+N+9KraJN336DBC31/w==)
+    password: ENC(0xo1mjptY8ydzHJRYo2nOwa/8JxqKDCOFhRuBBocBFC3e0LCB49HYnqjqIOS0ESmmjJEHrhMRd0Lmma6fc0oAQ==)
     subject: Vinyl Store
     properties:
       mail.smtp:
@@ -21,3 +21,6 @@ spring:
       properties:
         auto-offset-reset: earliest
         spring.json.trusted.packages: ru.xdpxrt.vinyl.dto.messageDTO
+jasypt:
+  encryptor:
+    password: spatifilum

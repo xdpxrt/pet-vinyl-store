@@ -9,4 +9,5 @@ public class Config {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
     public static final String ORDERS_TOPIC = "orders-topic";
     public static final String BIRTHDAY_TOPIC = "birthday-topic";
+    public static final String KEY = "spatifilum";
 }

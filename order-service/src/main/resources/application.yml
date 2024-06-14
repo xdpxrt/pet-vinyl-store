@@ -1,7 +1,7 @@
 server:
   port: 8083
 jwt:
-  secret: D3D4E47299E2B4E163FB62FC36DB5D75344DB95949574F0E64D9A404FF680BDA
+  secret: ENC(QE6dpps8uPs36LT/62AIOD4r2t1O/v4LsCLX5iiKXgzV10W9YzBUfvvKJAntH9cInm1hdS+Rqi5RBr4W/dQsxI/dItaWJJZNNlBL3S9rFhXEeP4PGtlwD7iiKZ9JOrVjDbkdg7ptZigWghUa23f74g==)
 spring:
   application:
     name: order-service
@@ -26,3 +26,6 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+jasypt:
+  encryptor:
+    password: spatifilum

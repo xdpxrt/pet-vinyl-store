@@ -9,11 +9,6 @@
 
     <artifactId>mail-service</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-kafka.version>3.1.2</spring-kafka.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>ru.xdpxrt.vinyl</groupId>
@@ -46,10 +41,9 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>${jasypt-spring-boot-starter.version}</version>
         </dependency>
     </dependencies>
 
@@ -58,6 +52,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-maven-plugin</artifactId>
+                <version>${jasypt-spring-boot-starter.version}</version>
             </plugin>
         </plugins>
     </build>
