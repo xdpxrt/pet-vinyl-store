@@ -1,6 +1,8 @@
 # Vinyl Store
 It's a place where you can find records of your favourire bands and buy them!
 
+Stack: Java, Spring Boot, Spring Security, PostgreSQL, JPA, Hibernate, Maven, Docker, Apache Kafka, Redis, Spring Cloud Gateway, Netflix(Eureka), OpenFeign.
+
 ![](https://github.com/xdpxrt/pet-vinyl-store/blob/main/ProjectArchitecture.PNG)
 
 Done at the moment:
@@ -11,6 +13,7 @@ Done at the moment:
 - caching popular data
 - creation orders and notification to email of changing their statuses 
 - sending messages about congratulating users on their birthday
+  
 Plans:
 - add compilations of popular performers
 - add pre-order functionality
