@@ -2,7 +2,7 @@
 It's a place where you can find records of your favourire bands and buy them!
 Vinyl Store is my pet-project where the technologies I've learned are put to use.
 
-### Stack: Java, Spring Boot, Spring Security, PostgreSQL, JPA, Hibernate, Maven, Docker, Apache Kafka, Redis, Spring Cloud Gateway, Netflix(Eureka), OpenFeign.
+#### Stack: Java, Spring Boot, Spring Security, PostgreSQL, JPA, Hibernate, Maven, Docker, Apache Kafka, Redis, Spring Cloud Gateway, Netflix(Eureka), OpenFeign.
 
 ![](https://github.com/xdpxrt/pet-vinyl-store/blob/main/ProjectArchitecture.PNG)
 
