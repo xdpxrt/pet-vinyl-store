@@ -11,8 +11,10 @@ Done at the moment:
 - moderation of all content
 - storing of covers of records at the AamazonS3
 - search records by different params
+- communication of services with FeignClients
 - caching popular data
-- creation orders and notification to email of changing their statuses 
+- creation orders and notification to email of changing their statuses
+- access to all services thrue gateway
 - sending messages about congratulating users on their birthday
   
 Plans:
